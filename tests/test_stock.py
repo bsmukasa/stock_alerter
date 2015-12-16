@@ -46,15 +46,23 @@ class StockTrendTest(unittest.TestCase):
     def setUp(self):
         self.stock = Stock("GOOG")
 
+    def given_a_series_of_prices(self, prices):
+        """Executes an update for each of three given prices.
+
+        Args:
+            prices: The price list.
+        """
+        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+
     def test_increasing_trend_true_3_updates(self):
         """Tests if prices from last three updates return as increasing if they are ascending.
 
         Use 3 updates.
         """
-        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
         prices = [8, 10, 12]
-        for timestamp, price in zip(timestamps, prices):
-            self.stock.update(timestamp, price)
+        self.given_a_series_of_prices(prices)
         self.assertTrue(self.stock.is_increasing_trend())
 
     def test_increasing_trend_false_3_updates_descending_prices(self):
@@ -62,10 +70,8 @@ class StockTrendTest(unittest.TestCase):
 
         Use 3 updates.
         """
-        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
         prices = [10, 8, 12]
-        for timestamp, price in zip(timestamps, prices):
-            self.stock.update(timestamp, price)
+        self.given_a_series_of_prices(prices)
         self.assertFalse(self.stock.is_increasing_trend())
 
     def test_increasing_trend_false_3_updates_equal_prices(self):
@@ -73,10 +79,8 @@ class StockTrendTest(unittest.TestCase):
 
         Use 3 updates.
         """
-        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
         prices = [8, 10, 10]
-        for timestamp, price in zip(timestamps, prices):
-            self.stock.update(timestamp, price)
+        self.given_a_series_of_prices(prices)
         self.assertFalse(self.stock.is_increasing_trend())
 
 
