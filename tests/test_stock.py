@@ -126,6 +126,11 @@ class StockCrossoverSignalTest(unittest.TestCase):
         """
         self.fail()
 
+    def test_crossover_by_date_does_not_exists(self):
+        """Tests if there is not a return value if crossover does not occur on given date.
+
+        """
+        self.fail()
 
 if __name__ == "__main__":
     unittest.main()
