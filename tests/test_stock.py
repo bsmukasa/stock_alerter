@@ -152,5 +152,14 @@ class StockCrossoverSignalTest(unittest.TestCase):
         """
         self.fail()
 
+    def test_closing_price_used(self):
+        """Test if a days closing price is used.
+
+        The method should only take into account the closing price (the last update for the date), and not the opening
+        or intermediate prices for the date.
+        """
+        self.fail()
+
+
 if __name__ == "__main__":
     unittest.main()
