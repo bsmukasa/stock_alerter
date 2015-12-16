@@ -7,3 +7,10 @@ class PriceRule:
     def __init__(self, symbol, condition):
         self.symbol = symbol
         self.condition = condition
+
+    def matches(self, exchange):
+        try:
+            stock = exchange[self.symbol]
+        except KeyError:
+            return False
+        return self.condition(stock) if stock.price else False
