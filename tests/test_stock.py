@@ -7,6 +7,7 @@ from stock import Stock
 class StockTest(unittest.TestCase):
     def test_new_stock_price(self):
         """A new stock should have a price that is None.
+
         """
         stock = Stock("GOOG")
         self.assertIsNone(stock.price)
@@ -20,6 +21,18 @@ class StockTest(unittest.TestCase):
         stock = Stock("GOOG")
         stock.update(datetime(2014, 2, 12), price=10)
         self.assertEqual(10, stock.price)
+
+    def test_negative_price_exception(self):
+        """An update with a negative price should return a value error.
+
+        """
+        stock = Stock("GOOG")
+        try:
+            stock.update(datetime(2014, 2, 12), price=-10)
+        except ValueError:
+            return
+        self.fail("ValueError was not raised")
+
 
 if __name__ == "__main__":
     unittest.main()
