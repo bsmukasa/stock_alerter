@@ -5,12 +5,14 @@ from stock import Stock
 
 
 class StockTest(unittest.TestCase):
+    def setUp(self):
+        self.stock = Stock("GOOG")
+
     def test_new_stock_price(self):
         """A new stock should have a price that is None.
 
         """
-        stock = Stock("GOOG")
-        self.assertIsNone(stock.price)
+        self.assertIsNone(self.stock.price)
 
     def test_stock_update(self):
         """An update should set the price on the stock object.
@@ -18,17 +20,77 @@ class StockTest(unittest.TestCase):
         Notes:
             We will be using the `datetime` module for the timestamp.
         """
-        stock = Stock("GOOG")
-        stock.update(datetime(2014, 2, 12), price=10)
-        self.assertEqual(10, stock.price)
+        self.stock.update(datetime(2014, 2, 12), price=10)
+        self.assertEqual(10, self.stock.price)
 
     def test_negative_price_exception(self):
         """An update with a negative price should return a value error.
 
         """
-        stock = Stock("GOOG")
-        self.assertRaises(ValueError, stock.update, datetime(2014, 2, 13), -10)
+        self.assertRaises(ValueError, self.stock.update, datetime(2014, 2, 13), -10)
 
+    def test_stock_holds_latest_price(self):
+        """A stock should hold the latest price.
+
+        Executes five updates.
+        """
+        self.stock.update(datetime(2014, 2, 12), price=10)
+        self.stock.update(datetime(2014, 2, 12), price=10.2)
+        self.stock.update(datetime(2014, 2, 12), price=15.789)
+        self.stock.update(datetime(2014, 2, 12), price=18.236458)
+        self.stock.update(datetime(2014, 2, 12), price=23.12)
+        self.assertAlmostEqual(23.12, self.stock.price, places=4)
+
+
+class StockTrendTest(unittest.TestCase):
+    def setUp(self):
+        self.stock = Stock("GOOG")
+
+    def test_increasing_trend_true_3_updates(self):
+        """Tests if prices from last three updates are increasing.
+
+        Use 3 updates.
+        """
+        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
+        prices = [8, 10, 12]
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+        self.assertTrue(self.stock.is_increasing_trend())
+
+    def test_increasing_trend_false_3_updates(self):
+        """Tests if prices from last three updates are not increasing.
+
+        Use 3 updates.
+        """
+        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
+        prices = [10, 8, 12]
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+        self.assertFalse(self.stock.is_increasing_trend())
+
+    def test_increasing_trend_true_5_mixed_updates(self):
+        """Tests if prices from last three updates are increasing.
+
+        Use 5 updates with only the last three increasing.
+        """
+        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13), datetime(2014, 2, 14),
+                      datetime(2014, 2, 15)]
+        prices = [11, 12, 8, 10, 14]
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+        self.assertTrue(self.stock.is_increasing_trend())
+
+    def test_increasing_trend_false_5_mixed_updates(self):
+        """Tests if prices from last five updates are not increasing.
+
+        Use 5 updates with only the first three increasing.
+        """
+        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13), datetime(2014, 2, 14),
+                      datetime(2014, 2, 15)]
+        prices = [8, 10, 12, 14, 10, 11]
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+        self.assertFalse(self.stock.is_increasing_trend())
 
 if __name__ == "__main__":
     unittest.main()
