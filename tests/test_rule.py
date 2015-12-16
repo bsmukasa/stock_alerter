@@ -32,3 +32,11 @@ class TestPriceRule(TestCase):
         """
         rule = PriceRule("MSFT", lambda stock: stock.price > 10)
         self.assertFalse(rule.matches(self.exchange))
+
+    def test_a_PriceRule_is_False_if_the_stock_hasnt_got_an_update_yet(self):
+        """Tests if false is returned if matched stock has not had an update.
+
+        """
+        self.exchange["AAPL"] = Stock("AAPL")
+        rule = PriceRule("AAPL", lambda stock: stock.price > 10)
+        self.assertFalse(rule.matches(self.exchange))
