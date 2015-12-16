@@ -166,6 +166,14 @@ class StockCrossoverSignalTest(unittest.TestCase):
         """
         self.fail()
 
+    def test_insufficient_long_term_moving_average_data(self):
+        """ Test 0 is returned if there is not enough closing prices for the long term moving average.
+
+        Closing prices for at least 11 days are needed to calculate long term moving average.
+
+        """
+        self.fail()
+
 
 if __name__ == "__main__":
     unittest.main()
