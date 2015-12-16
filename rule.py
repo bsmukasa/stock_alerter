@@ -23,3 +23,7 @@ class AndRule:
     def __init__(self, rule1, rule2):
         self.rule1 = rule1
         self.rule2 = rule2
+
+    def matches(self, exchange):
+        matches_bool = self.rule1.matches(exchange) and self.rule2.matches(exchange)
+        return matches_bool
