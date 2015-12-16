@@ -119,5 +119,8 @@ class StockTrendTest(unittest.TestCase):
         self.assertFalse(self.stock.is_increasing_trend())
 
 
+class StockCrossoverSignalTest(unittest.TestCase):
+    pass
+
 if __name__ == "__main__":
     unittest.main()
