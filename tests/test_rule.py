@@ -84,3 +84,12 @@ class TestAndRule(TestCase):
                            PriceRule("MSFT", lambda stock: stock.price > 10))
         rule = AndRule(and_rule, PriceRule("RHT", lambda stock: stock.price > 5))
         self.assertTrue(rule.matches(self.exchange))
+
+    def test_an_AndRule_false_matches_if_one_component_is_an_AndRule(self):
+        """Tests if False is returned if all component rules of a AndRule are false and one component is an AndRule.
+
+        """
+        and_rule = AndRule(PriceRule("GOOG", lambda stock: stock.price < 8),
+                           PriceRule("MSFT", lambda stock: stock.price > 10))
+        rule = AndRule(and_rule, PriceRule("RHT", lambda stock: stock.price > 5))
+        self.assertFalse(rule.matches(self.exchange))
