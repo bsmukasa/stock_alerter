@@ -27,11 +27,7 @@ class StockTest(unittest.TestCase):
 
         """
         stock = Stock("GOOG")
-        try:
-            stock.update(datetime(2014, 2, 12), price=-10)
-        except ValueError:
-            return
-        self.fail("ValueError was not raised")
+        self.assertRaises(ValueError, stock.update, datetime(2014, 2, 13), -10)
 
 
 if __name__ == "__main__":
