@@ -5,10 +5,7 @@ class Stock:
 
     @property
     def price(self):
-        if self.price_history:
-            return self.price_history[-1]
-        else:
-            return None
+        return self.price_history[-1] if self.price_history else None
 
     def update(self, timestamp, price):
         if price < 0:
