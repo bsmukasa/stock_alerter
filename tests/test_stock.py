@@ -132,5 +132,12 @@ class StockCrossoverSignalTest(unittest.TestCase):
         """
         self.fail()
 
+    def test_buying_signal_true(self):
+        """Test if 1 is returned if there is a buying signal.
+
+        Buying signal is when 5-day moving average crosses 10-day moving average from above to below on that date.
+        """
+        self.fail()
+
 if __name__ == "__main__":
     unittest.main()
