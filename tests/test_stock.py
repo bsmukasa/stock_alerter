@@ -160,6 +160,12 @@ class StockCrossoverSignalTest(unittest.TestCase):
         """
         self.fail()
 
+    def test_most_recent_closing_price_used(self):
+        """Test if the most recent closing price if given day does not have an update.
+
+        """
+        self.fail()
+
 
 if __name__ == "__main__":
     unittest.main()
