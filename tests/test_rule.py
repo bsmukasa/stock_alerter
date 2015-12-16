@@ -56,7 +56,9 @@ class TestAndRule(TestCase):
         goog.update(datetime(2014, 2, 10), 11)
         msft = Stock("MSFT")
         msft.update(datetime(2014, 2, 11), 12)
-        cls.exchange = {"GOOG": goog, "MSFT": msft}
+        redhat = Stock("RHT")
+        redhat.update(datetime(2014, 2, 12), 7)
+        cls.exchange = {"GOOG": goog, "MSFT": msft, "RHT": redhat}
 
     def test_an_AndRule_matches_if_all_component_rules_are_true(self):
         """Tests True is returned if all component rules of a AndRule are true.
@@ -73,3 +75,12 @@ class TestAndRule(TestCase):
         rule = AndRule(PriceRule("GOOG", lambda stock: stock.price < 8),
                        PriceRule("MSFT", lambda stock: stock.price > 10))
         self.assertFalse(rule.matches(self.exchange))
+
+    def test_an_AndRule_true_matches_if_one_component_is_an_AndRule(self):
+        """Tests if True is returned if all component rules of a AndRule are true and one component is an AndRule.
+
+        """
+        and_rule = AndRule(PriceRule("GOOG", lambda stock: stock.price > 8),
+                           PriceRule("MSFT", lambda stock: stock.price > 10))
+        rule = AndRule(and_rule, PriceRule("RHT", lambda stock: stock.price > 5))
+        self.assertTrue(rule.matches(self.exchange))
