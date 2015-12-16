@@ -17,3 +17,9 @@ class PriceRule:
 
     def depends_on(self):
         return {self.symbol}
+
+
+class AndRule:
+    def __init__(self, rule1, rule2):
+        self.rule1 = rule1
+        self.rule2 = rule2
