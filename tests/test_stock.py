@@ -120,7 +120,12 @@ class StockTrendTest(unittest.TestCase):
 
 
 class StockCrossoverSignalTest(unittest.TestCase):
-    pass
+    def test_crossover_by_date_exists(self):
+        """Tests if there is a return value if crossover occurs on given date.
+
+        """
+        self.fail()
+
 
 if __name__ == "__main__":
     unittest.main()
