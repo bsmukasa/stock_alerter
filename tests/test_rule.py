@@ -40,3 +40,10 @@ class TestPriceRule(TestCase):
         self.exchange["AAPL"] = Stock("AAPL")
         rule = PriceRule("AAPL", lambda stock: stock.price > 10)
         self.assertFalse(rule.matches(self.exchange))
+
+    def test_a_PriceRule_only_depends_on_its_stock(self):
+        """Test if a rule only depends on its stock.
+
+        """
+        rule = PriceRule("MSFT", lambda stock: stock.price > 10)
+        self.assertEqual({"MSFT"}, rule.depends_on())
