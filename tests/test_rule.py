@@ -18,3 +18,10 @@ class TestPriceRule(TestCase):
         """
         rule = PriceRule("GOOG", lambda stock: stock.price > 10)
         self.assertTrue(rule.matches(self.exchange))
+
+    def test_a_PriceRule_is_False_if_the_condition_is_not_met(self):
+        """Tests if false is returned when an exchange does not match a rule.
+
+        """
+        rule = PriceRule("GOOG", lambda stock: stock.price < 10)
+        self.assertFalse(rule.matches(self.exchange))
