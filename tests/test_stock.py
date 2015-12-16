@@ -146,5 +146,11 @@ class StockCrossoverSignalTest(unittest.TestCase):
         """
         self.fail()
 
+    def test_no_crossover_true(self):
+        """Test if 0 is returned if there is not a crossover event.
+
+        """
+        self.fail()
+
 if __name__ == "__main__":
     unittest.main()
