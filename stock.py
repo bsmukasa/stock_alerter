@@ -87,3 +87,9 @@ class Stock:
             return date_history[-1].price if date_history else self.closing_price(timestamp - timedelta(days=1))
         else:
             raise ValueError("stock has not had any updates")
+
+    def moving_average(self, timestamp, num_of_days):
+        dates = [timestamp - timedelta(days=i) for i in range(num_of_days)]
+        closing_prices = [self.closing_price(date) for date in dates]
+        average_closing_price = sum(closing_prices) / num_of_days
+        return average_closing_price
