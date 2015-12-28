@@ -75,7 +75,7 @@ class StockTrendTest(unittest.TestCase):
         """
         prices = [8, 10, 12]
         self.given_a_series_of_prices(prices)
-        self.assertTrue(self.stock.is_increasing_trend())
+        self.assertTrue(self.stock.is_increasing_trend)
 
     def test_increasing_trend_false_3_updates_descending_prices(self):
         """Tests if prices from last three updates return as not increasing if they are descending.
@@ -84,7 +84,7 @@ class StockTrendTest(unittest.TestCase):
         """
         prices = [10, 8, 12]
         self.given_a_series_of_prices(prices)
-        self.assertFalse(self.stock.is_increasing_trend())
+        self.assertFalse(self.stock.is_increasing_trend)
 
     def test_increasing_trend_false_3_updates_equal_prices(self):
         """Tests if prices from last three updates return as not increasing if two are equal.
@@ -93,7 +93,7 @@ class StockTrendTest(unittest.TestCase):
         """
         prices = [8, 10, 10]
         self.given_a_series_of_prices(prices)
-        self.assertFalse(self.stock.is_increasing_trend())
+        self.assertFalse(self.stock.is_increasing_trend)
 
     def test_increasing_trend_true_tested_using_timestamps(self):
         """Tests if increasing trend is determined using timestamps is True as expected.
@@ -105,7 +105,7 @@ class StockTrendTest(unittest.TestCase):
         self.stock.update(datetime(2014, 2, 15), price=23.12)
         self.stock.update(datetime(2014, 2, 12), price=18.236458)
         self.stock.update(datetime(2014, 2, 9), price=10.2)
-        self.assertTrue(self.stock.is_increasing_trend())
+        self.assertTrue(self.stock.is_increasing_trend)
 
     def test_increasing_trend_false_tested_using_timestamps(self):
         """Tests if increasing trend is determined using timestamps is False as expected.
@@ -117,7 +117,7 @@ class StockTrendTest(unittest.TestCase):
         self.stock.update(datetime(2014, 2, 15), price=15.789)
         self.stock.update(datetime(2014, 2, 11), price=18.236458)
         self.stock.update(datetime(2014, 2, 9), price=23.12)
-        self.assertFalse(self.stock.is_increasing_trend())
+        self.assertFalse(self.stock.is_increasing_trend)
 
 
 class StockClosingPriceTest(unittest.TestCase):
