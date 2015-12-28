@@ -124,11 +124,12 @@ class StockClosingPriceTest(unittest.TestCase):
     def setUp(self):
         self.stock = Stock("GOOG")
         timestamps = [
-            datetime(2014, 2, 11), datetime(2014, 2, 11), datetime(2014, 2, 11),
-            datetime(2014, 2, 12), datetime(2014, 2, 12), datetime(2014, 2, 12), datetime(2014, 2, 12),
-            datetime(2014, 2, 12),
-            datetime(2014, 2, 14), datetime(2014, 2, 14), datetime(2014, 2, 14), datetime(2014, 2, 14),
-            datetime(2014, 2, 15), datetime(2014, 2, 15)
+            datetime(2014, 2, 11, 10, 15), datetime(2014, 2, 11, 12, 15), datetime(2014, 2, 11, 14, 15),
+            datetime(2014, 2, 12, 8, 10), datetime(2014, 2, 12, 9, 15), datetime(2014, 2, 12, 10, 25),
+            datetime(2014, 2, 12, 12, 30), datetime(2014, 2, 12, 14),
+            datetime(2014, 2, 14, 9, 15), datetime(2014, 2, 14, 9, 45), datetime(2014, 2, 14, 10, 15),
+            datetime(2014, 2, 14, 11, 25),
+            datetime(2014, 2, 15, 12, 15), datetime(2014, 2, 15, 13, 15)
         ]
         prices = [
             10, 10.2, 10.789,
@@ -159,4 +160,4 @@ class StockClosingPriceTest(unittest.TestCase):
 
         """
         apple = Stock("AAPL")
-        self.assertRaises(ValueError, apple.closing_price(datetime(2014, 2, 14)))
+        self.assertRaises(ValueError, apple.closing_price, datetime(2014, 2, 14))
