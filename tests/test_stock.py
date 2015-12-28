@@ -146,20 +146,20 @@ class StockClosingPriceTest(unittest.TestCase):
         """Tests if closing price method returns the closing price for a given date.
 
         """
-        self.assertAlmostEquals(10.875, self.stock.closing_price(datetime(2014, 2, 14)), places=4)
+        self.assertAlmostEquals(10.875, self.stock._closing_price(datetime(2014, 2, 14)), places=4)
 
     def test_date_closing_price_no_update(self):
         """Tests if the previous days closing price is returned if the date does not have an update.
 
         """
-        self.assertAlmostEquals(10.72, self.stock.closing_price(datetime(2014, 2, 13)), places=4)
+        self.assertAlmostEquals(10.72, self.stock._closing_price(datetime(2014, 2, 13)), places=4)
 
     def test_no_closing_prices_exception(self):
         """A stock without any closing prices should return an exception.
 
         """
         apple = Stock("AAPL")
-        self.assertRaises(ValueError, apple.closing_price, datetime(2014, 2, 14))
+        self.assertRaises(ValueError, apple._closing_price, datetime(2014, 2, 14))
 
 
 class StockMovingAverageTest(unittest.TestCase):
@@ -192,7 +192,7 @@ class StockMovingAverageTest(unittest.TestCase):
 
         """
         expected_moving_average = (12.281 + 10.875 + 10.72) / 3
-        self.assertAlmostEquals(expected_moving_average, self.stock.moving_average(datetime(2014, 2, 15), 3), places=4)
+        self.assertAlmostEquals(expected_moving_average, self.stock._moving_average(datetime(2014, 2, 15), 3), places=4)
 
     def test_insufficient_data_moving_average(self):
         """Tests if 0 is returned if there are not enough days to calculate a moving average.
@@ -200,7 +200,7 @@ class StockMovingAverageTest(unittest.TestCase):
         Use 10 days.
 
         """
-        self.assertEquals(0, self.stock.moving_average(datetime(2014, 2, 14), 10))
+        self.assertEquals(0, self.stock._moving_average(datetime(2014, 2, 14), 10))
 
 
 class StockCrossoverSignalTest(unittest.TestCase):
