@@ -117,3 +117,6 @@ class Stock:
         """
         earliest_date = on_date.date() - timedelta(days=num_of_days)
         return earliest_date in [update.timestamp.date() for update in self.price_history]
+
+    def get_cross_over_signal(self, on_date):
+        pass
