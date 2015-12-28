@@ -52,95 +52,97 @@ class StockTest(unittest.TestCase):
         self.stock.update(datetime(2014, 2, 9), price=23.12)
         self.assertAlmostEqual(15.789, self.stock.price, places=4)
 
-    class StockTrendTest(unittest.TestCase):
-        def setUp(self):
-            self.stock = Stock("GOOG")
 
-        def given_a_series_of_prices(self, prices):
-            """Executes an update for each of three given prices.
+class StockTrendTest(unittest.TestCase):
+    def setUp(self):
+        self.stock = Stock("GOOG")
 
-            Args:
-                prices: The price list.
-            """
-            timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
-            for timestamp, price in zip(timestamps, prices):
-                self.stock.update(timestamp, price)
+    def given_a_series_of_prices(self, prices):
+        """Executes an update for each of three given prices.
 
-        def test_increasing_trend_true_3_updates(self):
-            """Tests if prices from last three updates return as increasing if they are ascending.
+        Args:
+            prices: The price list.
+        """
+        timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
 
-            Use 3 updates.
-            """
-            prices = [8, 10, 12]
-            self.given_a_series_of_prices(prices)
-            self.assertTrue(self.stock.is_increasing_trend())
+    def test_increasing_trend_true_3_updates(self):
+        """Tests if prices from last three updates return as increasing if they are ascending.
 
-        def test_increasing_trend_false_3_updates_descending_prices(self):
-            """Tests if prices from last three updates return as not increasing if they are descending.
+        Use 3 updates.
+        """
+        prices = [8, 10, 12]
+        self.given_a_series_of_prices(prices)
+        self.assertTrue(self.stock.is_increasing_trend())
 
-            Use 3 updates.
-            """
-            prices = [10, 8, 12]
-            self.given_a_series_of_prices(prices)
-            self.assertFalse(self.stock.is_increasing_trend())
+    def test_increasing_trend_false_3_updates_descending_prices(self):
+        """Tests if prices from last three updates return as not increasing if they are descending.
 
-        def test_increasing_trend_false_3_updates_equal_prices(self):
-            """Tests if prices from last three updates return as not increasing if two are equal.
+        Use 3 updates.
+        """
+        prices = [10, 8, 12]
+        self.given_a_series_of_prices(prices)
+        self.assertFalse(self.stock.is_increasing_trend())
 
-            Use 3 updates.
-            """
-            prices = [8, 10, 10]
-            self.given_a_series_of_prices(prices)
-            self.assertFalse(self.stock.is_increasing_trend())
+    def test_increasing_trend_false_3_updates_equal_prices(self):
+        """Tests if prices from last three updates return as not increasing if two are equal.
 
-        def test_increasing_trend_true_tested_using_timestamps(self):
-            """Tests if increasing trend is determined using timestamps is True as expected.
+        Use 3 updates.
+        """
+        prices = [8, 10, 10]
+        self.given_a_series_of_prices(prices)
+        self.assertFalse(self.stock.is_increasing_trend())
 
-            Use 5 updates.
-            """
-            self.stock.update(datetime(2014, 2, 10), price=10)
-            self.stock.update(datetime(2014, 2, 11), price=15.789)
-            self.stock.update(datetime(2014, 2, 15), price=23.12)
-            self.stock.update(datetime(2014, 2, 12), price=18.236458)
-            self.stock.update(datetime(2014, 2, 9), price=10.2)
-            self.assertTrue(self.stock.is_increasing_trend())
+    def test_increasing_trend_true_tested_using_timestamps(self):
+        """Tests if increasing trend is determined using timestamps is True as expected.
 
-        def test_increasing_trend_false_tested_using_timestamps(self):
-            """Tests if increasing trend is determined using timestamps is False as expected.
+        Use 5 updates.
+        """
+        self.stock.update(datetime(2014, 2, 10), price=10)
+        self.stock.update(datetime(2014, 2, 11), price=15.789)
+        self.stock.update(datetime(2014, 2, 15), price=23.12)
+        self.stock.update(datetime(2014, 2, 12), price=18.236458)
+        self.stock.update(datetime(2014, 2, 9), price=10.2)
+        self.assertTrue(self.stock.is_increasing_trend())
 
-            Use 5 updates.
-            """
-            self.stock.update(datetime(2014, 2, 12), price=10)
-            self.stock.update(datetime(2014, 2, 10), price=10.2)
-            self.stock.update(datetime(2014, 2, 15), price=15.789)
-            self.stock.update(datetime(2014, 2, 11), price=18.236458)
-            self.stock.update(datetime(2014, 2, 9), price=23.12)
-            self.assertFalse(self.stock.is_increasing_trend())
+    def test_increasing_trend_false_tested_using_timestamps(self):
+        """Tests if increasing trend is determined using timestamps is False as expected.
 
-    class StockClosingPriceTest(unittest.TestCase):
-        def setUp(self):
-            pass
+        Use 5 updates.
+        """
+        self.stock.update(datetime(2014, 2, 12), price=10)
+        self.stock.update(datetime(2014, 2, 10), price=10.2)
+        self.stock.update(datetime(2014, 2, 15), price=15.789)
+        self.stock.update(datetime(2014, 2, 11), price=18.236458)
+        self.stock.update(datetime(2014, 2, 9), price=23.12)
+        self.assertFalse(self.stock.is_increasing_trend())
 
-        def test_date_closing_price(self):
-            """Tests if closing price method returns the closing price for a given date.
 
-            """
-            self.fail()
+class StockClosingPriceTest(unittest.TestCase):
+    def setUp(self):
+        pass
 
-        def test_no_closing_prices_exception(self):
-            """An update with a negative price should return a value error.
+    def test_date_closing_price(self):
+        """Tests if closing price method returns the closing price for a given date.
 
-            """
-            self.fail()
+        """
+        self.fail()
 
-        def test_date_closing_price_no_update(self):
-            """Tests if the previous days closing price is returned if the date does not have an update.
+    def test_no_closing_prices_exception(self):
+        """An update with a negative price should return a value error.
 
-            """
-            self.fail()
+        """
+        self.fail()
 
-        def test_5_days_closing_prices(self):
-            """Tests if three most recent closing prices are returned.
+    def test_date_closing_price_no_update(self):
+        """Tests if the previous days closing price is returned if the date does not have an update.
 
-            """
-            self.fail()
+        """
+        self.fail()
+
+    def test_5_days_closing_prices(self):
+        """Tests if three most recent closing prices are returned.
+
+        """
+        self.fail()
