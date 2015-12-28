@@ -201,3 +201,39 @@ class StockMovingAverageTest(unittest.TestCase):
 
         """
         self.assertEquals(0, self.stock.moving_average(datetime(2014, 2, 14), 10))
+
+
+class StockCrossoverSignalTest(unittest.TestCase):
+    def test_buy_signal(self):
+        """Test if 1 is returned when there is a BuySignal.
+
+        A BuySignal indicates that the 5-day moving average crosses 10-day moving average from below to above on that
+        date.
+
+        """
+        self.fail()
+
+    def test_sell_signal(self):
+        """Test if -1 is returned when there is a SellSignal.
+
+        A SellSignal indicates that the 5-day moving average crosses 10-day moving average from above to below on
+        that date.
+
+        """
+        self.fail()
+
+    def test_neutral_signal(self):
+        """Test if 0 is returned when there is a NeutralSignal.
+
+        A NeutralSignal indicates that there is not any crossover.
+
+        """
+        self.fail()
+
+    def test_insufficient_data(self):
+        """Test if 0 is returned when there is insufficient data to calculate the long-term moving average.
+
+        A NeutralSignal indicates that there is not any crossover.
+
+        """
+        self.fail()
