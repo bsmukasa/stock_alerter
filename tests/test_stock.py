@@ -164,6 +164,28 @@ class StockClosingPriceTest(unittest.TestCase):
 
 
 class StockMovingAverageTest(unittest.TestCase):
+    def setUp(self):
+        self.stock = Stock("GOOG")
+        timestamps = [
+            datetime(2014, 2, 11, 10, 15), datetime(2014, 2, 11, 12, 15), datetime(2014, 2, 11, 14, 15),
+            datetime(2014, 2, 12, 8, 10), datetime(2014, 2, 12, 9, 15), datetime(2014, 2, 12, 10, 25),
+            datetime(2014, 2, 12, 12, 30), datetime(2014, 2, 12, 14),
+            datetime(2014, 2, 14, 9, 15), datetime(2014, 2, 14, 9, 45), datetime(2014, 2, 14, 10, 15),
+            datetime(2014, 2, 14, 11, 25),
+            datetime(2014, 2, 15, 12, 15), datetime(2014, 2, 15, 13, 15)
+        ]
+        prices = [
+            10, 10.2, 10.789,
+            11.2, 11.252, 11.123, 10.438, 10.72,
+            10.382, 10.485, 10.628, 10.875,
+            11.023, 12.281
+        ]
+
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+
+        self.assertAlmostEquals(12.281, self.stock.price, places=4)
+
     def test_three_day_moving_average(self):
         """Tests if the moving average for the previous three days.
 
