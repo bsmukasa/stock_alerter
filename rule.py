@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""PriceRule class and associated features.
+
+This module compares rules concerning a stock and its price history against a stock exchange record.
+
+"""
+
+
 class PriceRule:
     def __init__(self, symbol, condition):
         """PriceRule is a rule that triggers when a stock price satisfies a condition.

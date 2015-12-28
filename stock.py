@@ -30,7 +30,8 @@ class Stock:
     def price(self):
         """Returns the stocks most recent price.
 
-        Returns: Most recent price.
+        Returns:
+            Most recent price.
 
         """
         return self.price_history[-1].price if self.price_history else None
@@ -42,6 +43,9 @@ class Stock:
             timestamp: The timestamp of the update.
             price: The new price of the stock.
 
+        Raises:
+            ValueError: If price is less than zero.
+
         """
         if price < 0:
             raise ValueError("price should not be negative")
@@ -50,7 +54,8 @@ class Stock:
     def is_increasing_trend(self):
         """Determines if last three prices were ascending in value.
 
-        Returns: True if there is an increasing trend, False if not.
+        Returns:
+            True if there is an increasing trend, False if not.
 
         """
         return self.price_history[-3].price < self.price_history[-2].price < self.price_history[-1].price
