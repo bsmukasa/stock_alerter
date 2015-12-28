@@ -161,3 +161,21 @@ class StockClosingPriceTest(unittest.TestCase):
         """
         apple = Stock("AAPL")
         self.assertRaises(ValueError, apple.closing_price, datetime(2014, 2, 14))
+
+
+class StockMovingAverageTest(unittest.TestCase):
+    def test_three_day_moving_average(self):
+        """Tests if the moving average for the previous three days.
+
+        Moving average is the average of the closing prices for the previous three days.
+
+        """
+        self.fail()
+
+    def test_insufficient_data_moving_average(self):
+        """Tests if 0 is returned if there are not enough days to calculate a moving average.
+
+        Use 10 days.
+
+        """
+        self.fail()
