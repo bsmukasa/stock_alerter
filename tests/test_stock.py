@@ -116,3 +116,31 @@ class StockTest(unittest.TestCase):
             self.stock.update(datetime(2014, 2, 11), price=18.236458)
             self.stock.update(datetime(2014, 2, 9), price=23.12)
             self.assertFalse(self.stock.is_increasing_trend())
+
+    class StockClosingPriceTest(unittest.TestCase):
+        def setUp(self):
+            pass
+
+        def test_date_closing_price(self):
+            """Tests if closing price method returns the closing price for a given date.
+
+            """
+            self.fail()
+
+        def test_no_closing_prices_exception(self):
+            """An update with a negative price should return a value error.
+
+            """
+            self.fail()
+
+        def test_date_closing_price_no_update(self):
+            """Tests if the previous days closing price is returned if the date does not have an update.
+
+            """
+            self.fail()
+
+        def test_5_days_closing_prices(self):
+            """Tests if three most recent closing prices are returned.
+
+            """
+            self.fail()
