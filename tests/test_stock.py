@@ -1,4 +1,3 @@
-import random
 import unittest
 from datetime import datetime
 
@@ -192,7 +191,8 @@ class StockMovingAverageTest(unittest.TestCase):
         Moving average is the average of the closing prices for the previous three days.
 
         """
-        self.fail()
+        expected_moving_average = (12.281 + 10.875 + 10.72) / 3
+        self.assertAlmostEquals(expected_moving_average, self.stock.moving_average(datetime(2014, 2, 15), 3), places=4)
 
     def test_insufficient_data_moving_average(self):
         """Tests if 0 is returned if there are not enough days to calculate a moving average.
@@ -200,4 +200,4 @@ class StockMovingAverageTest(unittest.TestCase):
         Use 10 days.
 
         """
-        self.fail()
+        self.assertEquals(0, self.stock.moving_average(datetime(2014, 2, 14), 10))
