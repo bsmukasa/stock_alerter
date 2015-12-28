@@ -1,15 +1,27 @@
+# -*- coding: utf-8 -*-
+"""Stock class and associated features.
+
+Attributes:
+    stock_price_event: A namedtuple with timestamp and price of a stock price update.
+
+"""
 import bisect
 import collections
 
-PriceEvent = collections.namedtuple("PriceEvent", ["timestamp", "price"])
+stock_price_event = collections.namedtuple("stock_price_event", ["timestamp", "price"])
 
 
 class Stock:
     def __init__(self, symbol):
-        """Constructor for Stock instance.
+        """A Stock object representing its price history.
 
         Args:
-            symbol: The stock symbol.
+            symbol (str): The stock symbol.
+
+        Attributes:
+            symbol (str): The stock symbol.
+            price (float): The most recent price.
+
         """
         self.symbol = symbol
         self.price_history = []
@@ -29,10 +41,11 @@ class Stock:
         Args:
             timestamp: The timestamp of the update.
             price: The new price of the stock.
+
         """
         if price < 0:
             raise ValueError("price should not be negative")
-        bisect.insort_left(self.price_history, PriceEvent(timestamp, price))
+        bisect.insort_left(self.price_history, stock_price_event(timestamp, price))
 
     def is_increasing_trend(self):
         """Determines if last three prices were ascending in value.
