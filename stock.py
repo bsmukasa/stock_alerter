@@ -8,6 +8,8 @@ Attributes:
 import bisect
 import collections
 
+from datetime import timedelta
+
 stock_price_event = collections.namedtuple("stock_price_event", ["timestamp", "price"])
 
 
@@ -51,6 +53,7 @@ class Stock:
             raise ValueError("price should not be negative")
         bisect.insort_left(self.price_history, stock_price_event(timestamp, price))
 
+    @property
     def is_increasing_trend(self):
         """Determines if last three prices were ascending in value.
 
@@ -59,3 +62,63 @@ class Stock:
 
         """
         return self.price_history[-3].price < self.price_history[-2].price < self.price_history[-1].price
+
+    def closing_price(self, timestamp):
+        """Returns a given dates closing price.
+
+        This is the stock's last price from an update on the date or the closing price for the previous day if an
+        update has not occurred.
+
+        Args:
+            timestamp: The timestamp being checked for a closing price.
+
+        Raises:
+            ValueError: If stock has not had any updates.
+
+        Returns:
+            Closing price if it exists, executes self.closing_price(previous day) if not.
+
+        """
+        if self.price_history:
+            # noinspection PyShadowingNames
+            date_history = [
+                stock_price_event for stock_price_event in self.price_history if stock_price_event.timestamp.date() ==
+                timestamp.date()
+                ]
+            return date_history[-1].price if date_history else self.closing_price(timestamp - timedelta(days=1))
+        else:
+            raise ValueError("stock has not had any updates")
+
+    def moving_average(self, date, num_of_days):
+        """Calculates the moving average of a stock's closing prices from a given date.
+
+        Args:
+            date: The date from which the moving average is being calculated.
+            num_of_days: The number of days to be averaged.
+
+        Returns:
+            The average closing price for the given range if there are sufficient days in price history, 0 if not.
+
+        """
+        if self._date_in_price_history(date, num_of_days):
+            dates = [date - timedelta(days=i) for i in range(num_of_days)]
+            closing_prices = [self.closing_price(date) for date in dates]
+            average_closing_price = sum(closing_prices) / num_of_days
+            return average_closing_price
+        else:
+            return 0
+
+    def _date_in_price_history(self, timestamp, num_of_days):
+        """Checks it a provided date range exists in a stock's price history.
+
+        Args:
+            timestamp: The end date of the date range.
+            num_of_days: The number of days in the date range.
+
+        Returns:
+            True if the date exists, False if not.
+
+        """
+        earliest_date = timestamp.date() - timedelta(days=num_of_days)
+        # noinspection PyShadowingNames
+        return earliest_date in [stock_price_event.timestamp.date() for stock_price_event in self.price_history]
