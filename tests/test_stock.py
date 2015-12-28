@@ -1,3 +1,4 @@
+import random
 import unittest
 from datetime import datetime
 
@@ -121,28 +122,41 @@ class StockTrendTest(unittest.TestCase):
 
 class StockClosingPriceTest(unittest.TestCase):
     def setUp(self):
-        pass
+        self.stock = Stock("GOOG")
+        timestamps = [
+            datetime(2014, 2, 11), datetime(2014, 2, 11), datetime(2014, 2, 11),
+            datetime(2014, 2, 12), datetime(2014, 2, 12), datetime(2014, 2, 12), datetime(2014, 2, 12),
+            datetime(2014, 2, 12),
+            datetime(2014, 2, 14), datetime(2014, 2, 14), datetime(2014, 2, 14), datetime(2014, 2, 14),
+            datetime(2014, 2, 15), datetime(2014, 2, 15)
+        ]
+        prices = [
+            10, 10.2, 10.789,
+            11.2, 11.252, 11.123, 10.438, 10.72,
+            10.382, 10.485, 10.628, 10.875,
+            11.023, 12.281
+        ]
+
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+
+        self.assertAlmostEquals(12.281, self.stock.price, places=4)
 
     def test_date_closing_price(self):
         """Tests if closing price method returns the closing price for a given date.
 
         """
-        self.fail()
-
-    def test_no_closing_prices_exception(self):
-        """An update with a negative price should return a value error.
-
-        """
-        self.fail()
+        self.assertAlmostEquals(10.875, self.stock.closing_price(datetime(2014, 2, 14)), places=4)
 
     def test_date_closing_price_no_update(self):
         """Tests if the previous days closing price is returned if the date does not have an update.
 
         """
-        self.fail()
+        self.assertAlmostEquals(10.72, self.stock.closing_price(datetime(2014, 2, 13)), places=4)
 
-    def test_5_days_closing_prices(self):
-        """Tests if three most recent closing prices are returned.
+    def test_no_closing_prices_exception(self):
+        """A stock without any closing prices should return an exception.
 
         """
-        self.fail()
+        apple = Stock("AAPL")
+        self.assertRaises(ValueError, apple.closing_price(datetime(2014, 2, 14)))
