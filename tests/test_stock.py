@@ -51,3 +51,68 @@ class StockTest(unittest.TestCase):
         self.stock.update(datetime(2014, 2, 11), price=18.236458)
         self.stock.update(datetime(2014, 2, 9), price=23.12)
         self.assertAlmostEqual(15.789, self.stock.price, places=4)
+
+    class StockTrendTest(unittest.TestCase):
+        def setUp(self):
+            self.stock = Stock("GOOG")
+
+        def given_a_series_of_prices(self, prices):
+            """Executes an update for each of three given prices.
+
+            Args:
+                prices: The price list.
+            """
+            timestamps = [datetime(2014, 2, 11), datetime(2014, 2, 12), datetime(2014, 2, 13)]
+            for timestamp, price in zip(timestamps, prices):
+                self.stock.update(timestamp, price)
+
+        def test_increasing_trend_true_3_updates(self):
+            """Tests if prices from last three updates return as increasing if they are ascending.
+
+            Use 3 updates.
+            """
+            prices = [8, 10, 12]
+            self.given_a_series_of_prices(prices)
+            self.assertTrue(self.stock.is_increasing_trend())
+
+        def test_increasing_trend_false_3_updates_descending_prices(self):
+            """Tests if prices from last three updates return as not increasing if they are descending.
+
+            Use 3 updates.
+            """
+            prices = [10, 8, 12]
+            self.given_a_series_of_prices(prices)
+            self.assertFalse(self.stock.is_increasing_trend())
+
+        def test_increasing_trend_false_3_updates_equal_prices(self):
+            """Tests if prices from last three updates return as not increasing if two are equal.
+
+            Use 3 updates.
+            """
+            prices = [8, 10, 10]
+            self.given_a_series_of_prices(prices)
+            self.assertFalse(self.stock.is_increasing_trend())
+
+        def test_increasing_trend_true_tested_using_timestamps(self):
+            """Tests if increasing trend is determined using timestamps is True as expected.
+
+            Use 5 updates.
+            """
+            self.stock.update(datetime(2014, 2, 10), price=10)
+            self.stock.update(datetime(2014, 2, 11), price=15.789)
+            self.stock.update(datetime(2014, 2, 15), price=23.12)
+            self.stock.update(datetime(2014, 2, 12), price=18.236458)
+            self.stock.update(datetime(2014, 2, 9), price=10.2)
+            self.assertTrue(self.stock.is_increasing_trend())
+
+        def test_increasing_trend_false_tested_using_timestamps(self):
+            """Tests if increasing trend is determined using timestamps is False as expected.
+
+            Use 5 updates.
+            """
+            self.stock.update(datetime(2014, 2, 12), price=10)
+            self.stock.update(datetime(2014, 2, 10), price=10.2)
+            self.stock.update(datetime(2014, 2, 15), price=15.789)
+            self.stock.update(datetime(2014, 2, 11), price=18.236458)
+            self.stock.update(datetime(2014, 2, 9), price=23.12)
+            self.assertFalse(self.stock.is_increasing_trend())
