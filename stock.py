@@ -8,6 +8,8 @@ Attributes:
 import bisect
 import collections
 
+from datetime import timedelta
+
 stock_price_event = collections.namedtuple("stock_price_event", ["timestamp", "price"])
 
 
@@ -60,3 +62,28 @@ class Stock:
 
         """
         return self.price_history[-3].price < self.price_history[-2].price < self.price_history[-1].price
+
+    def closing_price(self, timestamp):
+        """Returns a given dates closing price.
+
+        This is the stock's last price from an update on the date or the closing price for the previous day if an
+        update has not occurred.
+
+        Args:
+            timestamp: The timestamp being checked for a closing price.
+
+        Raises:
+            ValueError: If stock has not had any updates.
+
+        Returns:
+            Closing price if it exists, executes self.closing_price(previous day) if not.
+
+        """
+        if self.price_history:
+            date_history = [
+                stock_price_event for stock_price_event in self.price_history if stock_price_event.timestamp.date() ==
+                timestamp.date()
+                ]
+            return date_history[-1].price if date_history else self.closing_price(timestamp - timedelta(days=1))
+        else:
+            raise ValueError("stock has not had any updates")
