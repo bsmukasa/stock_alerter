@@ -139,16 +139,8 @@ class Stock:
         return earliest_date < self.price_history[0].timestamp.date()
 
     @staticmethod
-    def _is_short_term_crossover_below_to_above(prev_short_term_ma, prev_long_term_ma,
-                                                short_term_ma, long_term_ma
-                                                ):
-        return prev_long_term_ma > prev_short_term_ma and long_term_ma < short_term_ma
-
-    @staticmethod
-    def _is_short_term_crossover_above_to_below(prev_short_term_ma, prev_long_term_ma,
-                                                short_term_ma, long_term_ma
-                                                ):
-        return prev_long_term_ma < prev_short_term_ma and long_term_ma > short_term_ma
+    def _is_short_term_crossover_below_to_above(prev_ma, prev_reference_ma, current_ma, current_reference_ma):
+        return prev_ma < prev_reference_ma and current_ma > current_reference_ma
 
     def get_crossover_signal(self, on_date):
         """ Determines the appropriate crossover signal for a stock at a given date.
@@ -181,7 +173,7 @@ class Stock:
         ):
             return StockSignal.buy
 
-        if self._is_short_term_crossover_above_to_below(
+        if self._is_short_term_crossover_below_to_above(
                 prev_short_term_moving_average, prev_long_term_moving_average,
                 short_term_moving_average, long_term_moving_average
         ):
