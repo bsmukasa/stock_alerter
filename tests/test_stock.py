@@ -223,26 +223,26 @@ class StockCrossoverSignalTest(unittest.TestCase):
             datetime(2014, 5, 19, 10, 15), datetime(2014, 5, 19, 12, 15), datetime(2014, 5, 19, 14, 15)
         ]
         prices = [
-            10, 49.827,
+            48.726, 49.827,
             48.526,
             47.785,
-            11.123, 47.023,
+            48.267, 47.023,
             46.956,
-            10.382, 10.485, 46.423,
-            10.2, 46.109,
-            11.023, 44.234,
+            44.821, 45.498, 46.423,
+            47.125, 46.109,
+            45.285, 44.234,
             45.068,
             47.237,
             48.715,
             46.234,
             45.238,
-            10.856, 10.783, 44.856
+            44.526, 44.689, 44.856
         ]
 
         for timestamp, price in zip(timestamps, prices):
             self.stock.update(timestamp, price)
 
-        self.assertAlmostEquals(10.652, self.stock.price, places=4)
+        self.assertAlmostEquals(44.856, self.stock.price, places=4)
 
     def test_buy_signal(self):
         """Test if 1 is returned when there is a BuySignal.
