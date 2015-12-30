@@ -13,7 +13,7 @@ class MovingAverage:
         self.series = series
         self.timespan = timespan
 
-    def value_on_date(self, on_date):
+    def value_on(self, on_date):
         """Calculates the moving average of a stock's closing prices from a given on_date.
 
         Args:

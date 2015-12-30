@@ -25,6 +25,7 @@ class TimeSeries:
         Args:
             timestamp: The timestamp of the update.
             value: The value of the update.
+
         """
         bisect.insort_left(self.series, Update(timestamp, value))
 

@@ -15,4 +15,4 @@ class StockCrossoverSignalTest(unittest.TestCase):
 
     def test_calculation_of_three_day_moving_average(self):
         expected_moving_average = (42.63 + 78.39 + 71.54) / 3
-        self.assertAlmostEquals(expected_moving_average, self.current_ma.value_on_date(datetime(2014, 4, 23)), places=4)
+        self.assertAlmostEquals(expected_moving_average, self.current_ma.value_on(datetime(2014, 4, 23)), places=4)

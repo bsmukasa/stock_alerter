@@ -75,28 +75,22 @@ class Stock:
         """
         return self.history.get_closing_price(on_date)
 
-    # def _moving_average(self, on_date, num_of_days):
-    #     """Calculates the moving average of a stock's closing prices from a given on_date.
-    #
-    #     Args:
-    #         on_date: The on_date from which the moving average is being calculated.
-    #         num_of_days: The number of days to be averaged.
-    #
-    #     Returns:
-    #         The average closing price for the given range if there are sufficient days in price history, 0 if not.
-    #
-    #     """
-    #     dates = [on_date - timedelta(days=i) for i in range(num_of_days)]
-    #     closing_prices = [self.history.get_closing_price(date) for date in dates]
-    #     average_closing_price = sum(closing_prices) / num_of_days
-    #     return average_closing_price
-
     @staticmethod
-    def _is_short_term_crossover_below_to_above(on_date, ma, reference_ma):
+    def _is_crossover_below_to_above(on_date, ma, reference_ma):
+        """Determines if the moving average given is crossing over its reference moving average on a given date.
+
+        Args:
+            on_date: The date on which the cross over signal is to be checked.
+            ma: The moving average.
+            reference_ma: The reference moving average.
+
+        Returns:
+            True if there is a crossover, False if not.
+
+        """
         prev_date = on_date - timedelta(days=1)
-        prev_comparison = ma.value_on_date(prev_date) < reference_ma.value_on_date(prev_date)
-        current_comparison = ma.value_on_date(on_date) > reference_ma.value_on_date(on_date)
-        return prev_comparison and current_comparison
+        return (ma.value_on(prev_date) < reference_ma.value_on(prev_date) and
+                ma.value_on(on_date) > reference_ma.value_on(on_date))
 
     def get_crossover_signal(self, on_date):
         """ Determines the appropriate crossover signal for a stock at a given date.
@@ -110,9 +104,9 @@ class Stock:
             on_date: The date on which the cross over signal is to be checked.
 
         Returns:
-            1 : If there is a buy signal.
-            -1: If there is a sell signal.
-            0 : If there is a neutral signal, or there is insufficient price history data.
+            StockSignal.buy     : If there is a buy signal.
+            StockSignal.sell    : If there is a sell signal.
+            StockSignal.neutral : If there is a neutral signal, or there is insufficient price history data.
 
         """
         if self.history.has_sufficient_update_history(on_date, self.LONG_TERM_TIME_SPAN):
@@ -121,10 +115,10 @@ class Stock:
         long_term_moving_average = MovingAverage(self.history, self.LONG_TERM_TIME_SPAN)
         short_term_moving_average = MovingAverage(self.history, self.SHORT_TERM_TIME_SPAN)
 
-        if self._is_short_term_crossover_below_to_above(on_date, short_term_moving_average, long_term_moving_average):
+        if self._is_crossover_below_to_above(on_date, short_term_moving_average, long_term_moving_average):
             return StockSignal.buy
 
-        if self._is_short_term_crossover_below_to_above(on_date, long_term_moving_average, short_term_moving_average):
+        if self._is_crossover_below_to_above(on_date, long_term_moving_average, short_term_moving_average):
             return StockSignal.sell
 
         return StockSignal.neutral
