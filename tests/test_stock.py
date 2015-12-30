@@ -204,6 +204,48 @@ class StockMovingAverageTest(unittest.TestCase):
 
 
 class StockCrossoverSignalTest(unittest.TestCase):
+    def setUp(self):
+        self.stock = Stock("GOOG")
+        timestamps = [
+            datetime(2014, 5, 2, 10, 15), datetime(2014, 5, 2, 12, 15),
+            datetime(2014, 5, 3, 10, 15),
+            datetime(2014, 5, 4, 12, 15),
+            datetime(2014, 5, 5, 14, 15),
+            datetime(2014, 5, 6, 10, 15), datetime(2014, 5, 6, 12, 15),
+            datetime(2014, 5, 7, 14, 15),
+            datetime(2014, 5, 8, 10, 15), datetime(2014, 5, 8, 12, 15), datetime(2014, 5, 8, 14, 15),
+            datetime(2014, 5, 9, 10, 15),
+            datetime(2014, 5, 10, 12, 15), datetime(2014, 5, 10, 14, 15),
+            datetime(2014, 5, 11, 10, 15), datetime(2014, 5, 11, 12, 15),
+            datetime(2014, 5, 12, 14, 15),
+            datetime(2014, 5, 13, 10, 15),
+            datetime(2014, 5, 14, 12, 15),
+            datetime(2014, 5, 15, 14, 15),
+            datetime(2014, 5, 16, 10, 15), datetime(2014, 5, 16, 12, 15), datetime(2014, 5, 16, 14, 15)
+        ]
+        prices = [
+            10, 10.2,
+            10.789,
+            11.2,
+            11.252,
+            11.123, 10.438,
+            10.72,
+            10.382, 10.485, 10.628,
+            10.875,
+            11.023, 12.281,
+            12.3, 12.257,
+            12.175,
+            11.9821,
+            11.725,
+            11.3879,
+            10.856, 10.783, 10.652
+        ]
+
+        for timestamp, price in zip(timestamps, prices):
+            self.stock.update(timestamp, price)
+
+        self.assertAlmostEquals(10.652, self.stock.price, places=4)
+
     def test_buy_signal(self):
         """Test if 1 is returned when there is a BuySignal.
 
