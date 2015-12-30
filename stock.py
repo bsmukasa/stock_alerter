@@ -49,7 +49,10 @@ class Stock:
             Most recent price.
 
         """
-        return self.price_history[-1].price if self.price_history else None
+        try:
+            return self.history[-1].value
+        except IndexError:
+            return None
 
     def update(self, timestamp, price):
         """Updates the stock's price history.
@@ -65,6 +68,7 @@ class Stock:
         if price < 0:
             raise ValueError("price should not be negative")
         bisect.insort_left(self.price_history, stock_price_event(timestamp, price))
+        self.history.update(timestamp, price)
 
     @property
     def is_increasing_trend(self):
@@ -74,7 +78,7 @@ class Stock:
             True if there is an increasing trend, False if not.
 
         """
-        return self.price_history[-3].price < self.price_history[-2].price < self.price_history[-1].price
+        return self.history[-3].value < self.history[-2].value < self.history[-1].value
 
     def _closing_price(self, on_date):
         """Returns a given dates closing price.
