@@ -96,13 +96,10 @@ class Stock:
             The average closing price for the given range if there are sufficient days in price history, 0 if not.
 
         """
-        if self._date_in_price_history(on_date, num_of_days):
-            dates = [on_date - timedelta(days=i) for i in range(num_of_days)]
-            closing_prices = [self._closing_price(date) for date in dates]
-            average_closing_price = sum(closing_prices) / num_of_days
-            return average_closing_price
-        else:
-            return 0
+        dates = [on_date - timedelta(days=i) for i in range(num_of_days)]
+        closing_prices = [self._closing_price(date) for date in dates]
+        average_closing_price = sum(closing_prices) / num_of_days
+        return average_closing_price
 
     def _date_in_price_history(self, on_date, num_of_days):
         """Checks it a provided date range exists in a stock's price history.
@@ -116,7 +113,52 @@ class Stock:
 
         """
         earliest_date = on_date.date() - timedelta(days=num_of_days)
-        return earliest_date in [update.timestamp.date() for update in self.price_history]
+        return earliest_date > self.price_history[0].timestamp.date()
+
+    def _is_insufficient_price_history_data(self, on_date):
+        """Checks for sufficient previous price history data from a given date to execute self.get_crossover_signal.
+
+        Args:
+            on_date: The date on which the cross over signal is to be checked.
+
+        Returns:
+            True if there is sufficient data, False if not.
+
+        """
+        earliest_date = on_date.date() - timedelta(days=10)
+        return earliest_date < self.price_history[0].timestamp.date()
 
     def get_cross_over_signal(self, on_date):
-        pass
+        """ Determines the appropriate crossover signal for a stock at a given date.
+
+        There are three types of signals:
+            Buy Signal: indicates the 5-day crosses 10-day moving average from below to above on that date.
+            Sell Signal: indicates the 5-day crosses 10-day moving average from above to below on that date.
+            Neutral Signal: indicates that there is not any crossover or insufficient price history data.
+
+        Args:
+            on_date: The date on which the cross over signal is to be checked.
+
+        Returns:
+            1 : If there is a buy signal.
+            -1: If there is a sell signal.
+            0 : If there is a neutral signal, or there is insufficient price history data.
+
+        """
+        if self._is_insufficient_price_history_data(on_date):
+            return 0
+
+        long_term_moving_average = self._moving_average(on_date, 10)
+        short_term_moving_average = self._moving_average(on_date, 5)
+        is_long_term_moving_average_greater = long_term_moving_average > short_term_moving_average
+
+        yesterday = on_date - timedelta(days=1)
+        prev_long_term_moving_average = self._moving_average(yesterday, 10)
+        prev_short_term_moving_average = self._moving_average(yesterday, 5)
+        is_prev_long_term_moving_average_greater = prev_long_term_moving_average > prev_short_term_moving_average
+
+        if is_long_term_moving_average_greater is False and is_prev_long_term_moving_average_greater:
+            return 1
+        if is_long_term_moving_average_greater and is_prev_long_term_moving_average_greater is False:
+            return -1
+        return 0
