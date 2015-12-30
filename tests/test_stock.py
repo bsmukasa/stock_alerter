@@ -194,14 +194,6 @@ class StockMovingAverageTest(unittest.TestCase):
         expected_moving_average = (12.281 + 10.875 + 10.72) / 3
         self.assertAlmostEquals(expected_moving_average, self.stock._moving_average(datetime(2014, 2, 15), 3), places=4)
 
-    def test_insufficient_data_moving_average(self):
-        """Tests if 0 is returned if there are not enough days to calculate a moving average.
-
-        Use 10 days.
-
-        """
-        self.assertEquals(None, self.stock._moving_average(datetime(2014, 2, 14), 10))
-
 
 class StockCrossoverSignalTest(unittest.TestCase):
     def setUp(self):
