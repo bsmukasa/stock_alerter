@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from stock import Stock
+from stock import Stock, StockSignal
 
 
 class StockTest(unittest.TestCase):
@@ -236,36 +236,15 @@ class StockCrossoverSignalTest(unittest.TestCase):
 
         self.assertAlmostEquals(44.856, self.stock.price, places=4)
 
-    def test_buy_signal(self):
-        """Test if 1 is returned when there is a BuySignal.
+    def test_short_term_upward_crossover_returns_buy_signal(self):
 
-        A BuySignal indicates that the 5-day moving average crosses 10-day moving average from below to above on that
-        date.
+        self.assertEquals(StockSignal.buy, self.stock.get_cross_over_signal(datetime(2014, 5, 16)))
 
-        """
-        self.assertEquals(1, self.stock.get_cross_over_signal(datetime(2014, 5, 16)))
+    def test_short_term_downward_crossover_returns_sell_signal(self):
+        self.assertEquals(StockSignal.sell, self.stock.get_cross_over_signal(datetime(2014, 5, 20)))
 
-    def test_sell_signal(self):
-        """Test if -1 is returned when there is a SellSignal.
+    def test_no_crossover_returns_neutral_signal(self):
+        self.assertEquals(StockSignal.neutral, self.stock.get_cross_over_signal(datetime(2014, 5, 14)))
 
-        A SellSignal indicates that the 5-day moving average crosses 10-day moving average from above to below on
-        that date.
-
-        """
-        self.assertEquals(-1, self.stock.get_cross_over_signal(datetime(2014, 5, 20)))
-
-    def test_neutral_signal(self):
-        """Test if 0 is returned when there is a NeutralSignal.
-
-        A NeutralSignal indicates that there is not any crossover.
-
-        """
-        self.assertEquals(0, self.stock.get_cross_over_signal(datetime(2014, 5, 14)))
-
-    def test_insufficient_data(self):
-        """Test if 0 is returned when there is insufficient data to calculate the long-term moving average.
-
-        A NeutralSignal indicates that there is not any crossover.
-
-        """
-        self.assertEquals(0, self.stock.get_cross_over_signal(datetime(2014, 5, 9)))
+    def test_insufficient_data_returns_neutral_stock_signal(self):
+        self.assertEquals(StockSignal.neutral, self.stock.get_cross_over_signal(datetime(2014, 5, 9)))
