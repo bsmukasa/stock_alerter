@@ -8,12 +8,24 @@ Update = collections.namedtuple("Update", ["timestamp", "value"])
 
 class TimeSeries:
     def __init__(self):
+        """An object that manages TimeSeries that include a timestamp and value.
+
+        Attributes:
+            series (Update): The chronological record of updates to the instance.
+
+        """
         self.series = []
 
     def __getitem__(self, index):
         return self.series[index]
 
     def update(self, timestamp, value):
+        """Updates the TimeSeries instance's series with a new entry.
+
+        Args:
+            timestamp: The timestamp of the update.
+            value: The value of the update.
+        """
         bisect.insort_left(self.series, Update(timestamp, value))
 
     def get_closing_price(self, on_date):
