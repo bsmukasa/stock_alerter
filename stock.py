@@ -46,8 +46,8 @@ class Stock:
         """Updates the stock's price history.
 
         Args:
-            timestamp: The timestamp of the update.
-            price: The new price of the stock.
+            timestamp (datetime.datetime): The timestamp of the update.
+            price (optional[int, float]): The new price of the stock.
 
         Raises:
             ValueError: If price is less than zero.
@@ -80,9 +80,9 @@ class Stock:
         """Determines if the moving average given is crossing over its reference moving average on a given date.
 
         Args:
-            on_date: The date on which the cross over signal is to be checked.
-            ma: The moving average.
-            reference_ma: The reference moving average.
+            on_date (datetime.datetime): The date on which the cross over signal is to be checked.
+            ma (MovingAverage): The moving average.
+            reference_ma (MovingAverage): The reference moving average.
 
         Returns:
             True if there is a crossover, False if not.
@@ -101,7 +101,7 @@ class Stock:
             Neutral Signal: indicates that there is not any crossover or insufficient price history data.
 
         Args:
-            on_date: The date on which the cross over signal is to be checked.
+            on_date (datetime.datetime): The date on which the cross over signal is to be checked.
 
         Returns:
             StockSignal.buy     : If there is a buy signal.

@@ -54,20 +54,17 @@ class PriceRule:
 
 
 class AndRule:
-    def __init__(self, rule1, rule2):
+    def __init__(self, *args):
         """A composite PriceRule class used for comparing multiple and/or composite PriceRules.
 
         Args:
-            rule1 (Optional[PriceRule, AndRule]): The first rule being checked.
-            rule2 (Optional[PriceRule, AndRule]): The second rule being checked.
+            *args (Optional[PriceRule, AndRule]): The rules being checked.
 
         Attributes:
-            rule1 (Optional[PriceRule, AndRule]): The first rule being checked.
-            rule2 (Optional[PriceRule, AndRule]): The second rule being checked.
+            *args (Optional[PriceRule, AndRule]): The rules being checked.
 
         """
-        self.rule1 = rule1
-        self.rule2 = rule2
+        self.rules = args
 
     def matches(self, exchange):
         """Determines if there is a match between two rules.
@@ -81,5 +78,11 @@ class AndRule:
             True if the AndRule finds matches in the exchange, False if not.
 
         """
-        matches_bool = self.rule1.matches(exchange) and self.rule2.matches(exchange)
+        matches_bool = all([rule.matches(exchange) for rule in self.rules])
         return matches_bool
+
+    def depends_on(self):
+        depends = set()
+        for rule in self.rules:
+            depends = depends.union(rule.depends_on())
+        return depends

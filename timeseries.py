@@ -23,8 +23,8 @@ class TimeSeries:
         """Updates the TimeSeries instance's series with a new entry.
 
         Args:
-            timestamp: The timestamp of the update.
-            value: The value of the update.
+            timestamp (datetime.datetime): The timestamp of the update.
+            value (int) The value of the update.
 
         """
         bisect.insort_left(self.series, Update(timestamp, value))
@@ -36,7 +36,7 @@ class TimeSeries:
         update has not occurred.
 
         Args:
-            on_date: The on_date being checked for a closing price.
+            on_date (datetime.datetime): The on_date being checked for a closing price.
 
         Raises:
             ValueError: If stock has not had any updates.
@@ -55,8 +55,8 @@ class TimeSeries:
         """Checks for sufficient update history data from a given date backwards with a given number of days.
 
         Args:
-            on_date: The date on which the cross over signal is to be checked.
-            num_of_days: The number of days of history.
+            on_date (datetime.datetime): The date on which the cross over signal is to be checked.
+            num_of_days (int): The number of days of history.
 
         Returns:
             True if there is sufficient data, False if not.
