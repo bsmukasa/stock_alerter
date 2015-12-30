@@ -61,82 +61,6 @@ class StockTrendTest(unittest.TestCase):
         self.assertFalse(self.stock.is_increasing_trend)
 
 
-class StockClosingPriceTest(unittest.TestCase):
-    def setUp(self):
-        self.stock = Stock("GOOG")
-        timestamps = [
-            datetime(2014, 2, 11, 10, 15), datetime(2014, 2, 11, 12, 15), datetime(2014, 2, 11, 14, 15),
-            datetime(2014, 2, 12, 8, 10), datetime(2014, 2, 12, 9, 15), datetime(2014, 2, 12, 10, 25),
-            datetime(2014, 2, 12, 12, 30), datetime(2014, 2, 12, 14),
-            datetime(2014, 2, 14, 9, 15), datetime(2014, 2, 14, 9, 45), datetime(2014, 2, 14, 10, 15),
-            datetime(2014, 2, 14, 11, 25),
-            datetime(2014, 2, 15, 12, 15), datetime(2014, 2, 15, 13, 15)
-        ]
-        prices = [
-            10, 10.2, 10.789,
-            11.2, 11.252, 11.123, 10.438, 10.72,
-            10.382, 10.485, 10.628, 10.875,
-            11.023, 12.281
-        ]
-
-        for timestamp, price in zip(timestamps, prices):
-            self.stock.update(timestamp, price)
-
-        self.assertAlmostEquals(12.281, self.stock.price, places=4)
-
-    def test_date_closing_price(self):
-        """Tests if closing price method returns the closing price for a given date.
-
-        """
-        self.assertAlmostEquals(10.875, self.stock._closing_price(datetime(2014, 2, 14)), places=4)
-
-    def test_date_closing_price_no_update(self):
-        """Tests if the previous days closing price is returned if the date does not have an update.
-
-        """
-        self.assertAlmostEquals(10.72, self.stock._closing_price(datetime(2014, 2, 13)), places=4)
-
-    def test_no_closing_prices_exception(self):
-        """A stock without any closing prices should return an exception.
-
-        """
-        apple = Stock("AAPL")
-        self.assertRaises(ValueError, apple._closing_price, datetime(2014, 2, 14))
-
-
-class StockMovingAverageTest(unittest.TestCase):
-    def setUp(self):
-        self.stock = Stock("GOOG")
-        timestamps = [
-            datetime(2014, 2, 11, 10, 15), datetime(2014, 2, 11, 12, 15), datetime(2014, 2, 11, 14, 15),
-            datetime(2014, 2, 12, 8, 10), datetime(2014, 2, 12, 9, 15), datetime(2014, 2, 12, 10, 25),
-            datetime(2014, 2, 12, 12, 30), datetime(2014, 2, 12, 14),
-            datetime(2014, 2, 14, 9, 15), datetime(2014, 2, 14, 9, 45), datetime(2014, 2, 14, 10, 15),
-            datetime(2014, 2, 14, 11, 25),
-            datetime(2014, 2, 15, 12, 15), datetime(2014, 2, 15, 13, 15)
-        ]
-        prices = [
-            10, 10.2, 10.789,
-            11.2, 11.252, 11.123, 10.438, 10.72,
-            10.382, 10.485, 10.628, 10.875,
-            11.023, 12.281
-        ]
-
-        for timestamp, price in zip(timestamps, prices):
-            self.stock.update(timestamp, price)
-
-        self.assertAlmostEquals(12.281, self.stock.price, places=4)
-
-    def test_three_day_moving_average(self):
-        """Tests if the moving average for the previous three days.
-
-        Moving average is the average of the closing prices for the previous three days.
-
-        """
-        expected_moving_average = (12.281 + 10.875 + 10.72) / 3
-        self.assertAlmostEquals(expected_moving_average, self.stock._moving_average(datetime(2014, 2, 15), 3), places=4)
-
-
 class StockCrossoverSignalTest(unittest.TestCase):
     def setUp(self):
         self.stock = Stock("GOOG")
@@ -178,8 +102,21 @@ class StockCrossoverSignalTest(unittest.TestCase):
 
         self.assertAlmostEquals(44.856, self.stock.price, places=4)
 
-    def test_short_term_upward_crossover_returns_buy_signal(self):
+    def test_correct_closing_price_is_returned_for_a_given_date(self):
+        self.assertAlmostEquals(46.423, self.stock._closing_price(datetime(2014, 5, 8)), places=4)
 
+    def test_previous_date_closing_price_is_returned_if_given_date_does_not_have_update(self):
+        self.assertAlmostEquals(46.109, self.stock._closing_price(datetime(2014, 5, 10)), places=4)
+
+    def test_stock_without_any_closing_prices_should_throw_ValueError(self):
+        apple = Stock("AAPL")
+        self.assertRaises(ValueError, apple._closing_price, datetime(2014, 2, 14))
+
+    def test_calculation_of_three_day_moving_average(self):
+        expected_moving_average = (46.234 + 48.715 + 48.715) / 3
+        self.assertAlmostEquals(expected_moving_average, self.stock._moving_average(datetime(2014, 5, 17), 3), places=4)
+
+    def test_short_term_upward_crossover_returns_buy_signal(self):
         self.assertEquals(StockSignal.buy, self.stock.get_cross_over_signal(datetime(2014, 5, 16)))
 
     def test_short_term_downward_crossover_returns_sell_signal(self):
