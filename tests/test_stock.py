@@ -208,37 +208,35 @@ class StockCrossoverSignalTest(unittest.TestCase):
         self.stock = Stock("GOOG")
         timestamps = [
             datetime(2014, 5, 2, 10, 15), datetime(2014, 5, 2, 12, 15),
-            datetime(2014, 5, 3, 10, 15),
             datetime(2014, 5, 4, 12, 15),
-            datetime(2014, 5, 5, 14, 15),
+            datetime(2014, 5, 5, 12, 15),
             datetime(2014, 5, 6, 10, 15), datetime(2014, 5, 6, 12, 15),
             datetime(2014, 5, 7, 14, 15),
             datetime(2014, 5, 8, 10, 15), datetime(2014, 5, 8, 12, 15), datetime(2014, 5, 8, 14, 15),
-            datetime(2014, 5, 9, 10, 15),
-            datetime(2014, 5, 10, 12, 15), datetime(2014, 5, 10, 14, 15),
+            datetime(2014, 5, 9, 12, 15), datetime(2014, 5, 9, 14, 15),
             datetime(2014, 5, 11, 10, 15), datetime(2014, 5, 11, 12, 15),
             datetime(2014, 5, 12, 14, 15),
-            datetime(2014, 5, 13, 10, 15),
-            datetime(2014, 5, 14, 12, 15),
+            datetime(2014, 5, 13, 12, 15),
             datetime(2014, 5, 15, 14, 15),
-            datetime(2014, 5, 16, 10, 15), datetime(2014, 5, 16, 12, 15), datetime(2014, 5, 16, 14, 15)
+            datetime(2014, 5, 17, 14, 15),
+            datetime(2014, 5, 18, 14, 15),
+            datetime(2014, 5, 19, 10, 15), datetime(2014, 5, 19, 12, 15), datetime(2014, 5, 19, 14, 15)
         ]
         prices = [
-            10, 10.2,
-            10.789,
-            11.2,
-            11.252,
-            11.123, 10.438,
-            10.72,
-            10.382, 10.485, 10.628,
-            10.875,
-            11.023, 12.281,
-            12.3, 12.257,
-            12.175,
-            11.9821,
-            11.725,
-            11.3879,
-            10.856, 10.783, 10.652
+            10, 49.827,
+            48.526,
+            47.785,
+            11.123, 47.023,
+            46.956,
+            10.382, 10.485, 46.423,
+            10.2, 46.109,
+            11.023, 44.234,
+            45.068,
+            47.237,
+            48.715,
+            46.234,
+            45.238,
+            10.856, 10.783, 44.856
         ]
 
         for timestamp, price in zip(timestamps, prices):
@@ -253,7 +251,7 @@ class StockCrossoverSignalTest(unittest.TestCase):
         date.
 
         """
-        self.fail()
+        self.assertEquals(1, self.stock.get_cross_over_signal(datetime(2014, 5, 15)))
 
     def test_sell_signal(self):
         """Test if -1 is returned when there is a SellSignal.
@@ -262,7 +260,7 @@ class StockCrossoverSignalTest(unittest.TestCase):
         that date.
 
         """
-        self.fail()
+        self.assertEquals(-1, self.stock.get_cross_over_signal(datetime(2014, 5, 15)))
 
     def test_neutral_signal(self):
         """Test if 0 is returned when there is a NeutralSignal.
