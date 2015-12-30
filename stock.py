@@ -174,8 +174,8 @@ class Stock:
             return StockSignal.buy
 
         if self._is_short_term_crossover_below_to_above(
-                prev_short_term_moving_average, prev_long_term_moving_average,
-                short_term_moving_average, long_term_moving_average
+                prev_long_term_moving_average, prev_short_term_moving_average,
+                long_term_moving_average, short_term_moving_average
         ):
             return StockSignal.sell
 
