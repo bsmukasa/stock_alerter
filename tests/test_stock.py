@@ -251,7 +251,7 @@ class StockCrossoverSignalTest(unittest.TestCase):
         date.
 
         """
-        self.assertEquals(1, self.stock.get_cross_over_signal(datetime(2014, 5, 15)))
+        self.assertEquals(1, self.stock.get_cross_over_signal(datetime(2014, 5, 16)))
 
     def test_sell_signal(self):
         """Test if -1 is returned when there is a SellSignal.
@@ -260,7 +260,7 @@ class StockCrossoverSignalTest(unittest.TestCase):
         that date.
 
         """
-        self.assertEquals(-1, self.stock.get_cross_over_signal(datetime(2014, 5, 15)))
+        self.assertEquals(-1, self.stock.get_cross_over_signal(datetime(2014, 5, 20)))
 
     def test_neutral_signal(self):
         """Test if 0 is returned when there is a NeutralSignal.
@@ -268,7 +268,7 @@ class StockCrossoverSignalTest(unittest.TestCase):
         A NeutralSignal indicates that there is not any crossover.
 
         """
-        self.fail()
+        self.assertEquals(0, self.stock.get_cross_over_signal(datetime(2014, 5, 14)))
 
     def test_insufficient_data(self):
         """Test if 0 is returned when there is insufficient data to calculate the long-term moving average.
@@ -276,4 +276,4 @@ class StockCrossoverSignalTest(unittest.TestCase):
         A NeutralSignal indicates that there is not any crossover.
 
         """
-        self.fail()
+        self.assertEquals(0, self.stock.get_cross_over_signal(datetime(2014, 5, 9)))
