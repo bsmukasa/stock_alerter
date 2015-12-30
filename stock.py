@@ -25,7 +25,6 @@ class Stock:
 
         """
         self.symbol = symbol
-        self.price_history = []
         self.history = TimeSeries()
 
     @property
@@ -89,20 +88,6 @@ class Stock:
         closing_prices = [self.history.get_closing_price(date) for date in dates]
         average_closing_price = sum(closing_prices) / num_of_days
         return average_closing_price
-
-    def _date_in_price_history(self, on_date, num_of_days):
-        """Checks it a provided date range exists in a stock's price history.
-
-        Args:
-            on_date: The end date of the date range.
-            num_of_days: The number of days in the date range.
-
-        Returns:
-            True if the date exists, False if not.
-
-        """
-        earliest_date = on_date.date() - timedelta(days=num_of_days)
-        return earliest_date > self.history[0].timestamp.date()
 
     def _is_insufficient_price_history_data(self, on_date):
         """Checks for sufficient previous price history data from a given date to execute self.get_crossover_signal.
