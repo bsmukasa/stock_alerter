@@ -8,48 +8,26 @@ class StockTest(unittest.TestCase):
     def setUp(self):
         self.stock = Stock("GOOG")
 
-    def test_new_stock_price(self):
-        """A new stock should have a price that is None.
-
-        """
+    def test_price_of_new_stock_should_be_none(self):
         self.assertIsNone(self.stock.price)
 
-    def test_stock_update(self):
-        """An update should set the price on the stock object.
-
-        Notes:
-            We will be using the `datetime` module for the timestamp.
-        """
+    def test_stock_update_sets_correct_price(self):
         self.stock.update(datetime(2014, 2, 12), price=10)
         self.assertEqual(10, self.stock.price)
 
-    def test_negative_price_exception(self):
-        """An update with a negative price should return a value error.
-
-        """
+    def test_negative_price_should_throw_ValueError(self):
         self.assertRaises(ValueError, self.stock.update, datetime(2014, 2, 13), -10)
 
-    def test_stock_holds_latest_price(self):
-        """A stock should hold the latest price.
-
-        Executes five updates.
-        """
-        self.stock.update(datetime(2014, 2, 12), price=10)
-        self.stock.update(datetime(2014, 2, 12), price=10.2)
-        self.stock.update(datetime(2014, 2, 12), price=15.789)
-        self.stock.update(datetime(2014, 2, 12), price=18.236458)
-        self.stock.update(datetime(2014, 2, 12), price=23.12)
+    def test_stock_price_should_return_latest_price(self):
+        self.stock.update(datetime(2014, 2, 14), price=15.789)
+        self.stock.update(datetime(2014, 2, 15), price=18.236458)
+        self.stock.update(datetime(2014, 2, 16), price=23.12)
         self.assertAlmostEqual(23.12, self.stock.price, places=4)
 
-    def test_stock_returns_latest_timestamp_price(self):
-        """A stock should return the latest price per timestamp.
-
-        """
-        self.stock.update(datetime(2014, 2, 12), price=10)
+    def test_price_is_the_latest_even_if_updates_are_made_out_of_order(self):
         self.stock.update(datetime(2014, 2, 10), price=10.2)
         self.stock.update(datetime(2014, 2, 15), price=15.789)
         self.stock.update(datetime(2014, 2, 11), price=18.236458)
-        self.stock.update(datetime(2014, 2, 9), price=23.12)
         self.assertAlmostEqual(15.789, self.stock.price, places=4)
 
 
