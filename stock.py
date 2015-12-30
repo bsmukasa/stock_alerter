@@ -89,19 +89,6 @@ class Stock:
         average_closing_price = sum(closing_prices) / num_of_days
         return average_closing_price
 
-    def _is_insufficient_price_history_data(self, on_date):
-        """Checks for sufficient previous price history data from a given date to execute self.get_crossover_signal.
-
-        Args:
-            on_date: The date on which the cross over signal is to be checked.
-
-        Returns:
-            True if there is sufficient data, False if not.
-
-        """
-        earliest_date = on_date.date() - timedelta(days=self.LONG_TERM_TIME_SPAN)
-        return earliest_date < self.history[0].timestamp.date()
-
     @staticmethod
     def _is_short_term_crossover_below_to_above(prev_ma, prev_reference_ma, current_ma, current_reference_ma):
         return prev_ma < prev_reference_ma and current_ma > current_reference_ma
@@ -123,7 +110,7 @@ class Stock:
             0 : If there is a neutral signal, or there is insufficient price history data.
 
         """
-        if self._is_insufficient_price_history_data(on_date):
+        if self.history.has_sufficient_update_history(on_date, self.LONG_TERM_TIME_SPAN):
             return StockSignal.neutral
 
         long_term_moving_average = self._moving_average(on_date, self.LONG_TERM_TIME_SPAN)

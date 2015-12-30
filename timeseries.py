@@ -37,3 +37,17 @@ class TimeSeries:
             return date_history[-1].value if date_history else self.get_closing_price(on_date - timedelta(days=1))
         else:
             raise ValueError("stock has not had any updates")
+
+    def has_sufficient_update_history(self, on_date, num_of_days):
+        """Checks for sufficient update history data from a given date backwards with a given number of days.
+
+        Args:
+            on_date: The date on which the cross over signal is to be checked.
+            num_of_days: The number of days of history.
+
+        Returns:
+            True if there is sufficient data, False if not.
+
+        """
+        earliest_date = on_date.date() - timedelta(days=num_of_days)
+        return earliest_date < self.series[0].timestamp.date()
