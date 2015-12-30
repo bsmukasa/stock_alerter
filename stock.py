@@ -14,6 +14,9 @@ stock_price_event = collections.namedtuple("stock_price_event", ["timestamp", "p
 
 
 class Stock:
+    LONG_TERM_TIMESPAN = 10
+    SHORT_TERM_TIMESPAN = 5
+
     def __init__(self, symbol):
         """A Stock object representing its price history.
 
@@ -125,7 +128,7 @@ class Stock:
             True if there is sufficient data, False if not.
 
         """
-        earliest_date = on_date.date() - timedelta(days=10)
+        earliest_date = on_date.date() - timedelta(days=self.LONG_TERM_TIMESPAN)
         return earliest_date < self.price_history[0].timestamp.date()
 
     def get_cross_over_signal(self, on_date):
@@ -148,13 +151,13 @@ class Stock:
         if self._is_insufficient_price_history_data(on_date):
             return 0
 
-        long_term_moving_average = self._moving_average(on_date, 10)
-        short_term_moving_average = self._moving_average(on_date, 5)
+        long_term_moving_average = self._moving_average(on_date, self.LONG_TERM_TIMESPAN)
+        short_term_moving_average = self._moving_average(on_date, self.SHORT_TERM_TIMESPAN)
         is_long_term_moving_average_greater = long_term_moving_average > short_term_moving_average
 
         yesterday = on_date - timedelta(days=1)
-        prev_long_term_moving_average = self._moving_average(yesterday, 10)
-        prev_short_term_moving_average = self._moving_average(yesterday, 5)
+        prev_long_term_moving_average = self._moving_average(yesterday, self.LONG_TERM_TIMESPAN)
+        prev_short_term_moving_average = self._moving_average(yesterday, self.SHORT_TERM_TIMESPAN)
         is_prev_long_term_moving_average_greater = prev_long_term_moving_average > prev_short_term_moving_average
 
         if is_long_term_moving_average_greater is False and is_prev_long_term_moving_average_greater:
