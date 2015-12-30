@@ -117,13 +117,13 @@ class StockCrossoverSignalTest(unittest.TestCase):
         self.assertAlmostEquals(expected_moving_average, self.stock._moving_average(datetime(2014, 5, 17), 3), places=4)
 
     def test_short_term_upward_crossover_returns_buy_signal(self):
-        self.assertEquals(StockSignal.buy, self.stock.get_cross_over_signal(datetime(2014, 5, 16)))
+        self.assertEquals(StockSignal.buy, self.stock.get_crossover_signal(datetime(2014, 5, 16)))
 
     def test_short_term_downward_crossover_returns_sell_signal(self):
-        self.assertEquals(StockSignal.sell, self.stock.get_cross_over_signal(datetime(2014, 5, 20)))
+        self.assertEquals(StockSignal.sell, self.stock.get_crossover_signal(datetime(2014, 5, 20)))
 
     def test_no_crossover_returns_neutral_signal(self):
-        self.assertEquals(StockSignal.neutral, self.stock.get_cross_over_signal(datetime(2014, 5, 14)))
+        self.assertEquals(StockSignal.neutral, self.stock.get_crossover_signal(datetime(2014, 5, 14)))
 
     def test_insufficient_data_returns_neutral_stock_signal(self):
-        self.assertEquals(StockSignal.neutral, self.stock.get_cross_over_signal(datetime(2014, 5, 9)))
+        self.assertEquals(StockSignal.neutral, self.stock.get_crossover_signal(datetime(2014, 5, 9)))

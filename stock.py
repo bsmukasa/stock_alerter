@@ -21,8 +21,8 @@ class StockSignal(Enum):
 
 
 class Stock:
-    LONG_TERM_TIMESPAN = 10
-    SHORT_TERM_TIMESPAN = 5
+    LONG_TERM_TIME_SPAN = 10
+    SHORT_TERM_TIME_SPAN = 5
 
     def __init__(self, symbol):
         """A Stock object representing its price history.
@@ -135,10 +135,22 @@ class Stock:
             True if there is sufficient data, False if not.
 
         """
-        earliest_date = on_date.date() - timedelta(days=self.LONG_TERM_TIMESPAN)
+        earliest_date = on_date.date() - timedelta(days=self.LONG_TERM_TIME_SPAN)
         return earliest_date < self.price_history[0].timestamp.date()
 
-    def get_cross_over_signal(self, on_date):
+    @staticmethod
+    def _is_short_term_crossover_below_to_above(prev_short_term_ma, prev_long_term_ma,
+                                                short_term_ma, long_term_ma
+                                                ):
+        return prev_long_term_ma > prev_short_term_ma and long_term_ma < short_term_ma
+
+    @staticmethod
+    def _is_short_term_crossover_above_to_below(prev_short_term_ma, prev_long_term_ma,
+                                                short_term_ma, long_term_ma
+                                                ):
+        return prev_long_term_ma < prev_short_term_ma and long_term_ma > short_term_ma
+
+    def get_crossover_signal(self, on_date):
         """ Determines the appropriate crossover signal for a stock at a given date.
 
         There are three types of signals:
@@ -158,17 +170,21 @@ class Stock:
         if self._is_insufficient_price_history_data(on_date):
             return StockSignal.neutral
 
-        long_term_moving_average = self._moving_average(on_date, self.LONG_TERM_TIMESPAN)
-        short_term_moving_average = self._moving_average(on_date, self.SHORT_TERM_TIMESPAN)
-        is_long_term_moving_average_greater = long_term_moving_average > short_term_moving_average
+        long_term_moving_average = self._moving_average(on_date, self.LONG_TERM_TIME_SPAN)
+        short_term_moving_average = self._moving_average(on_date, self.SHORT_TERM_TIME_SPAN)
+        prev_long_term_moving_average = self._moving_average(on_date - timedelta(days=1), self.LONG_TERM_TIME_SPAN)
+        prev_short_term_moving_average = self._moving_average(on_date - timedelta(days=1), self.SHORT_TERM_TIME_SPAN)
 
-        yesterday = on_date - timedelta(days=1)
-        prev_long_term_moving_average = self._moving_average(yesterday, self.LONG_TERM_TIMESPAN)
-        prev_short_term_moving_average = self._moving_average(yesterday, self.SHORT_TERM_TIMESPAN)
-        is_prev_long_term_moving_average_greater = prev_long_term_moving_average > prev_short_term_moving_average
-
-        if is_long_term_moving_average_greater is False and is_prev_long_term_moving_average_greater:
+        if self._is_short_term_crossover_below_to_above(
+                prev_short_term_moving_average, prev_long_term_moving_average,
+                short_term_moving_average, long_term_moving_average
+        ):
             return StockSignal.buy
-        if is_long_term_moving_average_greater and is_prev_long_term_moving_average_greater is False:
+
+        if self._is_short_term_crossover_above_to_below(
+                prev_short_term_moving_average, prev_long_term_moving_average,
+                short_term_moving_average, long_term_moving_average
+        ):
             return StockSignal.sell
+
         return StockSignal.neutral
