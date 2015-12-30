@@ -112,10 +112,6 @@ class StockCrossoverSignalTest(unittest.TestCase):
         apple = Stock("AAPL")
         self.assertRaises(ValueError, apple._closing_price, datetime(2014, 2, 14))
 
-    def test_calculation_of_three_day_moving_average(self):
-        expected_moving_average = (46.234 + 48.715 + 48.715) / 3
-        self.assertAlmostEquals(expected_moving_average, self.stock._moving_average(datetime(2014, 5, 17), 3), places=4)
-
     def test_short_term_upward_crossover_returns_buy_signal(self):
         self.assertEquals(StockSignal.buy, self.stock.get_crossover_signal(datetime(2014, 5, 16)))
 

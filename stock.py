@@ -1,5 +1,7 @@
 from datetime import timedelta
 from enum import Enum
+
+from moving_average import MovingAverage
 from timeseries import TimeSeries
 
 
@@ -73,25 +75,28 @@ class Stock:
         """
         return self.history.get_closing_price(on_date)
 
-    def _moving_average(self, on_date, num_of_days):
-        """Calculates the moving average of a stock's closing prices from a given on_date.
-
-        Args:
-            on_date: The on_date from which the moving average is being calculated.
-            num_of_days: The number of days to be averaged.
-
-        Returns:
-            The average closing price for the given range if there are sufficient days in price history, 0 if not.
-
-        """
-        dates = [on_date - timedelta(days=i) for i in range(num_of_days)]
-        closing_prices = [self.history.get_closing_price(date) for date in dates]
-        average_closing_price = sum(closing_prices) / num_of_days
-        return average_closing_price
+    # def _moving_average(self, on_date, num_of_days):
+    #     """Calculates the moving average of a stock's closing prices from a given on_date.
+    #
+    #     Args:
+    #         on_date: The on_date from which the moving average is being calculated.
+    #         num_of_days: The number of days to be averaged.
+    #
+    #     Returns:
+    #         The average closing price for the given range if there are sufficient days in price history, 0 if not.
+    #
+    #     """
+    #     dates = [on_date - timedelta(days=i) for i in range(num_of_days)]
+    #     closing_prices = [self.history.get_closing_price(date) for date in dates]
+    #     average_closing_price = sum(closing_prices) / num_of_days
+    #     return average_closing_price
 
     @staticmethod
-    def _is_short_term_crossover_below_to_above(prev_ma, prev_reference_ma, current_ma, current_reference_ma):
-        return prev_ma < prev_reference_ma and current_ma > current_reference_ma
+    def _is_short_term_crossover_below_to_above(on_date, ma, reference_ma):
+        prev_date = on_date - timedelta(days=1)
+        prev_comparison = ma.value_on_date(prev_date) < reference_ma.value_on_date(prev_date)
+        current_comparison = ma.value_on_date(on_date) > reference_ma.value_on_date(on_date)
+        return prev_comparison and current_comparison
 
     def get_crossover_signal(self, on_date):
         """ Determines the appropriate crossover signal for a stock at a given date.
@@ -113,21 +118,13 @@ class Stock:
         if self.history.has_sufficient_update_history(on_date, self.LONG_TERM_TIME_SPAN):
             return StockSignal.neutral
 
-        long_term_moving_average = self._moving_average(on_date, self.LONG_TERM_TIME_SPAN)
-        short_term_moving_average = self._moving_average(on_date, self.SHORT_TERM_TIME_SPAN)
-        prev_long_term_moving_average = self._moving_average(on_date - timedelta(days=1), self.LONG_TERM_TIME_SPAN)
-        prev_short_term_moving_average = self._moving_average(on_date - timedelta(days=1), self.SHORT_TERM_TIME_SPAN)
+        long_term_moving_average = MovingAverage(self.history, self.LONG_TERM_TIME_SPAN)
+        short_term_moving_average = MovingAverage(self.history, self.SHORT_TERM_TIME_SPAN)
 
-        if self._is_short_term_crossover_below_to_above(
-                prev_short_term_moving_average, prev_long_term_moving_average,
-                short_term_moving_average, long_term_moving_average
-        ):
+        if self._is_short_term_crossover_below_to_above(on_date, short_term_moving_average, long_term_moving_average):
             return StockSignal.buy
 
-        if self._is_short_term_crossover_below_to_above(
-                prev_long_term_moving_average, prev_short_term_moving_average,
-                long_term_moving_average, short_term_moving_average
-        ):
+        if self._is_short_term_crossover_below_to_above(on_date, long_term_moving_average, short_term_moving_average):
             return StockSignal.sell
 
         return StockSignal.neutral
