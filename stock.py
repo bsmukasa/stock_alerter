@@ -1,19 +1,20 @@
-# -*- coding: utf-8 -*-
-"""Stock class and associated features.
-
-Attributes:
-    stock_price_event: A namedtuple with timestamp and price of a stock price update.
-
-"""
-import bisect
-import collections
-
 from datetime import timedelta
+from enum import Enum
 
-stock_price_event = collections.namedtuple("stock_price_event", ["timestamp", "price"])
+from moving_average import MovingAverage
+from timeseries import TimeSeries
+
+
+class StockSignal(Enum):
+    buy = 1
+    neutral = 0
+    sell = -1
 
 
 class Stock:
+    LONG_TERM_TIME_SPAN = 10
+    SHORT_TERM_TIME_SPAN = 5
+
     def __init__(self, symbol):
         """A Stock object representing its price history.
 
@@ -26,7 +27,7 @@ class Stock:
 
         """
         self.symbol = symbol
-        self.price_history = []
+        self.history = TimeSeries()
 
     @property
     def price(self):
@@ -36,7 +37,10 @@ class Stock:
             Most recent price.
 
         """
-        return self.price_history[-1].price if self.price_history else None
+        try:
+            return self.history[-1].value
+        except IndexError:
+            return None
 
     def update(self, timestamp, price):
         """Updates the stock's price history.
@@ -51,7 +55,7 @@ class Stock:
         """
         if price < 0:
             raise ValueError("price should not be negative")
-        bisect.insort_left(self.price_history, stock_price_event(timestamp, price))
+        self.history.update(timestamp, price)
 
     @property
     def is_increasing_trend(self):
@@ -61,64 +65,60 @@ class Stock:
             True if there is an increasing trend, False if not.
 
         """
-        return self.price_history[-3].price < self.price_history[-2].price < self.price_history[-1].price
+        return self.history[-3].value < self.history[-2].value < self.history[-1].value
 
-    def closing_price(self, timestamp):
+    def _closing_price(self, on_date):
         """Returns a given dates closing price.
 
-        This is the stock's last price from an update on the date or the closing price for the previous day if an
-        update has not occurred.
-
-        Args:
-            timestamp: The timestamp being checked for a closing price.
-
-        Raises:
-            ValueError: If stock has not had any updates.
-
-        Returns:
-            Closing price if it exists, executes self.closing_price(previous day) if not.
+        This method was refactored to timeseries module. Remains for test maintenance.
 
         """
-        if self.price_history:
-            # noinspection PyShadowingNames
-            date_history = [
-                stock_price_event for stock_price_event in self.price_history if stock_price_event.timestamp.date() ==
-                timestamp.date()
-                ]
-            return date_history[-1].price if date_history else self.closing_price(timestamp - timedelta(days=1))
-        else:
-            raise ValueError("stock has not had any updates")
+        return self.history.get_closing_price(on_date)
 
-    def moving_average(self, date, num_of_days):
-        """Calculates the moving average of a stock's closing prices from a given date.
+    @staticmethod
+    def _is_crossover_below_to_above(on_date, ma, reference_ma):
+        """Determines if the moving average given is crossing over its reference moving average on a given date.
 
         Args:
-            date: The date from which the moving average is being calculated.
-            num_of_days: The number of days to be averaged.
+            on_date: The date on which the cross over signal is to be checked.
+            ma: The moving average.
+            reference_ma: The reference moving average.
 
         Returns:
-            The average closing price for the given range if there are sufficient days in price history, 0 if not.
+            True if there is a crossover, False if not.
 
         """
-        if self._date_in_price_history(date, num_of_days):
-            dates = [date - timedelta(days=i) for i in range(num_of_days)]
-            closing_prices = [self.closing_price(date) for date in dates]
-            average_closing_price = sum(closing_prices) / num_of_days
-            return average_closing_price
-        else:
-            return 0
+        prev_date = on_date - timedelta(days=1)
+        return (ma.value_on(prev_date) < reference_ma.value_on(prev_date) and
+                ma.value_on(on_date) > reference_ma.value_on(on_date))
 
-    def _date_in_price_history(self, timestamp, num_of_days):
-        """Checks it a provided date range exists in a stock's price history.
+    def get_crossover_signal(self, on_date):
+        """ Determines the appropriate crossover signal for a stock at a given date.
+
+        There are three types of signals:
+            Buy Signal: indicates the 5-day crosses 10-day moving average from below to above on that date.
+            Sell Signal: indicates the 5-day crosses 10-day moving average from above to below on that date.
+            Neutral Signal: indicates that there is not any crossover or insufficient price history data.
 
         Args:
-            timestamp: The end date of the date range.
-            num_of_days: The number of days in the date range.
+            on_date: The date on which the cross over signal is to be checked.
 
         Returns:
-            True if the date exists, False if not.
+            StockSignal.buy     : If there is a buy signal.
+            StockSignal.sell    : If there is a sell signal.
+            StockSignal.neutral : If there is a neutral signal, or there is insufficient price history data.
 
         """
-        earliest_date = timestamp.date() - timedelta(days=num_of_days)
-        # noinspection PyShadowingNames
-        return earliest_date in [stock_price_event.timestamp.date() for stock_price_event in self.price_history]
+        if self.history.has_sufficient_update_history(on_date, self.LONG_TERM_TIME_SPAN):
+            return StockSignal.neutral
+
+        long_term_moving_average = MovingAverage(self.history, self.LONG_TERM_TIME_SPAN)
+        short_term_moving_average = MovingAverage(self.history, self.SHORT_TERM_TIME_SPAN)
+
+        if self._is_crossover_below_to_above(on_date, short_term_moving_average, long_term_moving_average):
+            return StockSignal.buy
+
+        if self._is_crossover_below_to_above(on_date, long_term_moving_average, short_term_moving_average):
+            return StockSignal.sell
+
+        return StockSignal.neutral
