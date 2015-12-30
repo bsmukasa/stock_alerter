@@ -9,8 +9,15 @@ import bisect
 import collections
 
 from datetime import timedelta
+from enum import Enum
 
 stock_price_event = collections.namedtuple("stock_price_event", ["timestamp", "price"])
+
+
+class StockSignal(Enum):
+    buy = 1
+    neutral = 0
+    sell = -1
 
 
 class Stock:
@@ -149,7 +156,7 @@ class Stock:
 
         """
         if self._is_insufficient_price_history_data(on_date):
-            return 0
+            return StockSignal.neutral
 
         long_term_moving_average = self._moving_average(on_date, self.LONG_TERM_TIMESPAN)
         short_term_moving_average = self._moving_average(on_date, self.SHORT_TERM_TIMESPAN)
@@ -161,7 +168,7 @@ class Stock:
         is_prev_long_term_moving_average_greater = prev_long_term_moving_average > prev_short_term_moving_average
 
         if is_long_term_moving_average_greater is False and is_prev_long_term_moving_average_greater:
-            return 1
+            return StockSignal.buy
         if is_long_term_moving_average_greater and is_prev_long_term_moving_average_greater is False:
-            return -1
-        return 0
+            return StockSignal.sell
+        return StockSignal.neutral
