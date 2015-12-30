@@ -200,7 +200,7 @@ class StockMovingAverageTest(unittest.TestCase):
         Use 10 days.
 
         """
-        self.assertEquals(0, self.stock._moving_average(datetime(2014, 2, 14), 10))
+        self.assertEquals(None, self.stock._moving_average(datetime(2014, 2, 14), 10))
 
 
 class StockCrossoverSignalTest(unittest.TestCase):
