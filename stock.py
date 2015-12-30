@@ -1,19 +1,6 @@
-# -*- coding: utf-8 -*-
-"""Stock class and associated features.
-
-Attributes:
-    stock_price_event: A namedtuple with timestamp and price of a stock price update.
-
-"""
-import bisect
-import collections
-
 from datetime import timedelta
 from enum import Enum
-
 from timeseries import TimeSeries
-
-stock_price_event = collections.namedtuple("stock_price_event", ["timestamp", "price"])
 
 
 class StockSignal(Enum):
@@ -67,7 +54,6 @@ class Stock:
         """
         if price < 0:
             raise ValueError("price should not be negative")
-        bisect.insort_left(self.price_history, stock_price_event(timestamp, price))
         self.history.update(timestamp, price)
 
     @property
@@ -83,24 +69,10 @@ class Stock:
     def _closing_price(self, on_date):
         """Returns a given dates closing price.
 
-        This is the stock's last price from an update on the date or the closing price for the previous day if an
-        update has not occurred.
-
-        Args:
-            on_date: The on_date being checked for a closing price.
-
-        Raises:
-            ValueError: If stock has not had any updates.
-
-        Returns:
-            Closing price if it exists, executes self.closing_price(previous day) if not.
+        This method was refactored to timeseries module. Remains for test maintenance.
 
         """
-        if self.price_history:
-            date_history = [update for update in self.price_history if update.timestamp.date() == on_date.date()]
-            return date_history[-1].price if date_history else self._closing_price(on_date - timedelta(days=1))
-        else:
-            raise ValueError("stock has not had any updates")
+        return self.history.get_closing_price(on_date)
 
     def _moving_average(self, on_date, num_of_days):
         """Calculates the moving average of a stock's closing prices from a given on_date.
@@ -114,7 +86,7 @@ class Stock:
 
         """
         dates = [on_date - timedelta(days=i) for i in range(num_of_days)]
-        closing_prices = [self._closing_price(date) for date in dates]
+        closing_prices = [self.history.get_closing_price(date) for date in dates]
         average_closing_price = sum(closing_prices) / num_of_days
         return average_closing_price
 
@@ -130,7 +102,7 @@ class Stock:
 
         """
         earliest_date = on_date.date() - timedelta(days=num_of_days)
-        return earliest_date > self.price_history[0].timestamp.date()
+        return earliest_date > self.history[0].timestamp.date()
 
     def _is_insufficient_price_history_data(self, on_date):
         """Checks for sufficient previous price history data from a given date to execute self.get_crossover_signal.
@@ -143,7 +115,7 @@ class Stock:
 
         """
         earliest_date = on_date.date() - timedelta(days=self.LONG_TERM_TIME_SPAN)
-        return earliest_date < self.price_history[0].timestamp.date()
+        return earliest_date < self.history[0].timestamp.date()
 
     @staticmethod
     def _is_short_term_crossover_below_to_above(prev_ma, prev_reference_ma, current_ma, current_reference_ma):
