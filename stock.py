@@ -1,6 +1,7 @@
 from datetime import timedelta
 from enum import Enum
 
+from event import Event
 from moving_average import MovingAverage
 from timeseries import TimeSeries
 
@@ -24,10 +25,13 @@ class Stock:
         Attributes:
             symbol (str): The stock symbol.
             price (float): The most recent price.
+            history (TimeSeries): The record of stock price updates by timestamp and price.
+            updated (Event): The event that is called when an update occurs to the stocks history.
 
         """
         self.symbol = symbol
         self.history = TimeSeries()
+        self.updated = Event()
 
     @property
     def price(self):
@@ -43,7 +47,7 @@ class Stock:
             return None
 
     def update(self, timestamp, price):
-        """Updates the stock's price history.
+        """Updates the stock's price history and fires an event.
 
         Args:
             timestamp (datetime.datetime): The timestamp of the update.
@@ -56,6 +60,7 @@ class Stock:
         if price < 0:
             raise ValueError("price should not be negative")
         self.history.update(timestamp, price)
+        self.updated.fire(self)
 
     @property
     def is_increasing_trend(self):
