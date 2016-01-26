@@ -2,7 +2,7 @@ import smtplib
 import unittest
 from unittest import mock
 
-from action import PrintAction, EmailAction
+from stock_alerter.action import PrintAction, EmailAction
 
 
 class MessageMatcher:

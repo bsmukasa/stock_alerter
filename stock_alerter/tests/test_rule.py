@@ -1,8 +1,9 @@
 from datetime import datetime
 from unittest import TestCase
 
-from rule import PriceRule, AndRule
 from stock import Stock
+
+from stock_alerter.rule import PriceRule, AndRule
 
 
 class TestPriceRule(TestCase):

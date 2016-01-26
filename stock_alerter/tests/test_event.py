@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
-from event import Event
+
+from stock_alerter.event import Event
 
 
 class EventTest(unittest.TestCase):

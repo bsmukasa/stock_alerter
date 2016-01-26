@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from stock import Stock, StockSignal
+from stock_alerter.stock import Stock, StockSignal
 
 
 class StockTest(unittest.TestCase):
