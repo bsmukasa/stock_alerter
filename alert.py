@@ -21,7 +21,7 @@ class Alert:
         self.exchange = None
 
     def connect(self, exchange):
-        """ Connects all dependent stocks to their update_event event.
+        """Connects all dependent stocks to their update_event event.
 
         The update_event Event instance is fired whenever a new update is made to a stock. The listener for this event
         is the self.check_rule method of the Alert class.
@@ -35,7 +35,7 @@ class Alert:
             exchange[stock].updated.connect(self.check_rule)
 
     def check_rule(self):
-        """ Checks if a stock's update causes a rule to be matched.
+        """Checks if a stock's update causes a rule to be matched.
 
         If the rule is matched, it calls the execute method on the Action
         instance. If the rule doesn't match, then nothing happens.
