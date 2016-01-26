@@ -4,6 +4,7 @@ class Event:
 
         Attributes:
             listeners: A list of functions registered for the event.
+
         """
         self.listeners = []
 
@@ -14,6 +15,7 @@ class Event:
 
         Args:
             listener: The function of the class being registered.
+
         """
         self.listeners.append(listener)
 
@@ -25,6 +27,7 @@ class Event:
         Args:
             *args: Arguments to be used as parameters in the listener functions.
             **kwargs: Keyword arguments to be used as parameters in the listener functions.
+
         """
         for listener in self.listeners:
             listener(*args, **kwargs)
