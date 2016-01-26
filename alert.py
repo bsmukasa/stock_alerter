@@ -14,6 +14,7 @@ class Alert:
             rule (Rule): The rule the alert is checking.
             action (Action): The action taken if the rule is matched.
             exchange: The list of dependent stocks added when connect is executed.
+
         """
         self.description = description
         self.rule = rule
@@ -28,6 +29,7 @@ class Alert:
 
         Args:
             exchange: The list of dependent stocks.
+
         """
         self.exchange = exchange
         dependent_stocks = self.rule.depends_on()
@@ -39,6 +41,7 @@ class Alert:
 
         If the rule is matched, it calls the execute method on the Action
         instance. If the rule doesn't match, then nothing happens.
+
         """
         if self.rule.matches(self.exchange):
             self.action.execute(self.description)
