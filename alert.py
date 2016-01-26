@@ -21,9 +21,9 @@ class Alert:
         self.exchange = None
 
     def connect(self, exchange):
-        """ Connects all dependent stocks to their updated event.
+        """ Connects all dependent stocks to their update_event event.
 
-        The updated Event instance is fired whenever a new update is made to a stock. The listener for this event
+        The update_event Event instance is fired whenever a new update is made to a stock. The listener for this event
         is the self.check_rule method of the Alert class.
 
         Args:

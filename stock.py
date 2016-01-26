@@ -26,12 +26,12 @@ class Stock:
             symbol (str): The stock symbol.
             price (float): The most recent price.
             history (TimeSeries): The record of stock price updates by timestamp and price.
-            updated (Event): The event that is called when an update occurs to the stocks history.
+            update_event (Event): The event that is called when an update occurs to the stocks history.
 
         """
         self.symbol = symbol
         self.history = TimeSeries()
-        self.updated = Event()
+        self.update_event = Event()
 
     @property
     def price(self):
@@ -60,7 +60,7 @@ class Stock:
         if price < 0:
             raise ValueError("price should not be negative")
         self.history.update(timestamp, price)
-        self.updated.fire(self)
+        self.update_event.fire(self)
 
     @property
     def is_increasing_trend(self):

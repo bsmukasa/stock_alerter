@@ -1,5 +1,8 @@
 class Event:
     def __init__(self):
+        """
+
+        """
         self.listeners = []
 
     def connect(self, listener):
