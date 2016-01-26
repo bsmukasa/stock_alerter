@@ -1,11 +1,12 @@
 import unittest
-from unittest import mock
 from datetime import datetime
+from unittest import mock
 
-from alert import Alert
 from event import Event
 from rule import PriceRule
 from stock import Stock
+
+from stock_alerter.alert import Alert
 
 
 class AlertTest(unittest.TestCase):

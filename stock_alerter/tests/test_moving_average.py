@@ -1,8 +1,9 @@
 import unittest
 from datetime import datetime
 
-from moving_average import MovingAverage
 from timeseries import TimeSeries
+
+from stock_alerter.moving_average import MovingAverage
 
 
 class StockCrossoverSignalTest(unittest.TestCase):
